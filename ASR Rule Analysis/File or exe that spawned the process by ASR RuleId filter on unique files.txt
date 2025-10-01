@@ -1,0 +1,12 @@
+//File or exe that spawned the process by ASR RuleId filter on unique files
+DeviceEvents
+| where Timestamp > ago(30d)
+| where ActionType startswith "Asr"
+| where ActionType endswith "Audited"
+| extend RuleGuid = tolower(tostring(parsejson(AdditionalFields).RuleId))
+| summarize DevicesImpacted = dcount(DeviceId), 
+            InitiatingProcessCommandLines = make_set(InitiatingProcessCommandLine),
+            InitiatingProcessFolderPaths = make_set(InitiatingProcessFolderPath),
+            RuleGuids = make_set(RuleGuid)
+            by ActionType, InitiatingProcessFileName
+| project DevicesImpacted, ActionType, InitiatingProcessFileName, InitiatingProcessCommandLines, InitiatingProcessFolderPaths, RuleGuids

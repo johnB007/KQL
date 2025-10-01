@@ -1,0 +1,15 @@
+//File or exe that spawned the process by ActionType
+DeviceEvents
+| where Timestamp > ago (30d)
+// | where ActionType == 'AsrLsassCredentialTheftAudited'
+//| where ActionType != 'AsrLsassCredentialTheftBlocked' 
+// | where ActionType != 'AsrPsexecWmiChildProcessAudited'
+// | where ActionType != 'AsrPersistenceThroughWmiAudited'
+// | where ActionType != 'AsrUntrustedExecutableAudited' 
+// | where ActionType != 'AsrOfficeMacroWin32ApiCallsAudited'
+| where ActionType == 'AsrAbusedSystemToolAudited'
+//| where ActionType startswith "Asr"
+//| where ActionType endswith "Audited"
+| extend RuleGuid = tolower(tostring(parsejson(AdditionalFields).RuleId))
+| summarize DevicesImpacted=dcount(DeviceId) by ActionType, InitiatingProcessFileName, InitiatingProcessCommandLine, InitiatingProcessFolderPath, RuleGuid, DeviceId
+| project DevicesImpacted, ActionType, InitiatingProcessFileName , InitiatingProcessCommandLine, InitiatingProcessFolderPath, RuleGuid, DeviceId

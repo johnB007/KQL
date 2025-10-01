@@ -1,0 +1,12 @@
+//Top machines ASR rules by distinct count 
+DeviceEvents
+| where Timestamp > ago (30d) // change based on results
+| where ActionType startswith 'Asr' // All ASR Events 
+//| where DeviceId == "X" //Narrow results on certain device
+| summarize
+    ['Total ASR hit count']=count(),
+    ['Distinct ASR rules count']=dcount(ActionType),
+    ['List of ASR rules triggered']=make_set(ActionType),
+    ['List of processess triggering ASR']=make_set(InitiatingProcessCommandLine)
+    by DeviceId, DeviceName
+| sort by ['Total ASR hit count'] desc 
