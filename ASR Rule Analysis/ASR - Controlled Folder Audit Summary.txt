@@ -1,0 +1,3 @@
+DeviceEvents
+| where ActionType == "ControlledFolderAccessViolationAudited" 
+| summarize Timestamp=max(Timestamp) by DeviceName, ActionType,FileName, FolderPath, InitiatingProcessCommandLine, InitiatingProcessFileName, InitiatingProcessFolderPath, InitiatingProcessId, SHA1 
