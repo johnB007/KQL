@@ -1,0 +1,1 @@
+DeviceAlertEvents | where Title == "Tamper Protection bypass"
