@@ -1,4 +1,4 @@
-### Getting Exclusions from KQL for Intune for ASR
+### Getting Exclusions from KQL for Intune for ASR with "Risk" Lables
 
 This KQL  analyzes Attack Surface Reduction activity on a "specific" device and shows which files triggered the ASR events, how often they occurred, 
 and which ASR rules were involved. It identifies the exact file path that caused the rule to fire and determines the best exclusion path to consider if the file is legitimate.
@@ -67,4 +67,10 @@ If you 100% needed this excluded, this is what you would do.
 - Do not use wildcards (*.dll or Office15* directories)
 
       
-  C:\Program Files (x86)\Microsoft Office\Office15\AntiMalware.Utils.RemoteAPI.Interop-{GUID}.dll
+===>  C:\Program Files (x86)\Microsoft Office\Office15\AntiMalware.Utils.RemoteAPI.Interop-{GUID}.dll
+
+### Risk Labels
+Risk labels in this query help you quickly judge whether an ASR exclusion is safe or dangerous by categorizing the path that triggered the rule, because ASR rules are designed to block behaviors attackers commonly abuse and broad exclusions can reopen those attack paths.  For example, HIGH – Windows system binary (avoid excluding) might be C:\Windows\System32\wscript.exe or C:\Windows\System32\cmd.exe, which are common “living off the land” tools that attackers leverage, so excluding them weakens core protections; MED – Microsoft Office binary (avoid unless confirmed needed) might be C:\Program Files\Microsoft Office\root\Office16\winword.exe or an Office add in DLL, and broad Office exclusions undermine rules meant to prevent Office‑driven attack chains; MED – Program Files binary (validate signer/publisher) might be C:\Program Files\Vendor\App\app.exe, which is typically safer because it’s not user writable but still requires validation to ensure it’s legitimate and signed; MED – ProgramData (shared, validate ownership) might be C:\ProgramData\AppCache\tool.exe, which can be abused because multiple processes can write there; HIGH – User-writable temp/cache (risky exclusion) might be C:\Users\Elliot\AppData\Local\Temp\payload.exe or C:\Users\Elliot\AppData\Local\Microsoft\Windows\INetCache\file.exe, which are high‑risk because attackers commonly stage payloads in writable directories; MED/HIGH – OneDrive user content (risky, scope narrowly) might be C:\Users\Elliot\OneDrive\Scripts\tool.exe where content is user controlled and externally synced; MED/HIGH – User profile path (scope narrowly) might be C:\Users\Elliot\Downloads\installer.exe, which is also attacker friendly; and UNKNOWN – Review required or UNKNOWN – No path captured simply means the telemetry did not give enough path detail to make a safe exclusion decision without reviewing the raw event.  Using these labels, analysts can decide whether to allow a single file, tune a configuration issue, or avoid an exclusion entirely, keeping ASR protections effective while minimizing business impact.
+
+<img width="2983" height="1547" alt="image" src="https://github.com/user-attachments/assets/8a701149-b0fc-4790-80f4-98e5c69ca057" />
+
