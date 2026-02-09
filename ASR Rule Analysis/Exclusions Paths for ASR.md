@@ -8,7 +8,7 @@ business required applications continue functioning without weakening security.
 
 ```
 //Get exclusion paths
-let TargetDevice = "defcon30"; //Insert DeviceName Here
+let TargetDevice = "XXXXXX"; //Insert DeviceName Here
 let TimeRange = 90d;
 DeviceEvents
 | where Timestamp > ago(TimeRange)
