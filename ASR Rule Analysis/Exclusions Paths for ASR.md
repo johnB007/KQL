@@ -1,6 +1,6 @@
 ### Getting Exclusions from KQL for Intune for ASR with "Risk" Lables
 
-This KQL  analyzes Attack Surface Reduction activity on a "specific" device and shows which files triggered the ASR events, how often they occurred, 
+This KQL  analyzes Attack Surface Reduction activity on a "specific" device (add in line 2) and shows which files triggered the ASR events, how often they occurred, 
 and which ASR rules were involved. It identifies the exact file path that caused the rule to fire and determines the best exclusion path to consider if the file is legitimate.
 It also applies a risk label so analysts can easily understand whether an exclusion would be safe or potentially harmful. A SOC team can use the output to decide which
 ASR events are false positives during audit or testing, and then use the identified exclusion paths to create precise and minimal ASR exclusions in Intune so that
