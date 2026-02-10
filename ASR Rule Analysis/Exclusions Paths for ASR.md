@@ -61,16 +61,67 @@ is the folder containing that file, so that combination is the authoritative “
 <img width="3063" height="1711" alt="image" src="https://github.com/user-attachments/assets/58bc6411-a7e4-4f65-ab0c-8677043589e6" />
 
 ### Exclusions
-If you 100% needed this excluded, this is what you would do. 
-- Do not exclude the entire folder    
-- Do not exclude PowerPoint (powerpnt.exe)     
-- Do not use wildcards (*.dll or Office15* directories)
 
-      
-===>  C:\Program Files (x86)\Microsoft Office\Office15\AntiMalware.Utils.RemoteAPI.Interop-{GUID}.dll
+If you absolutely must exclude this, follow these guidelines:
+
+- Do not exclude the entire folder  
+- Do not exclude PowerPoint (powerpnt.exe)  
+- Do not use wildcards such as *.dll or Office15* directories  
+
+Use a single, file‑level exclusion only:
+
+C:\Program Files (x86)\Microsoft Office\Office15\AntiMalware.Utils.RemoteAPI.Interop-*.dll
+
+or the strict GUID-length pattern:
+
+C:\Program Files (x86)\Microsoft Office\Office15\AntiMalware.Utils.RemoteAPI.Interop-GUID.dll
 
 ### Risk Labels
-Risk labels in this query help you quickly judge whether an ASR exclusion is safe or dangerous by categorizing the path that triggered the rule, because ASR rules are designed to block behaviors attackers commonly abuse and broad exclusions can reopen those attack paths.  For example, HIGH – Windows system binary (avoid excluding) might be C:\Windows\System32\wscript.exe or C:\Windows\System32\cmd.exe, which are common “living off the land” tools that attackers leverage, so excluding them weakens core protections; MED – Microsoft Office binary (avoid unless confirmed needed) might be C:\Program Files\Microsoft Office\root\Office16\winword.exe or an Office add in DLL, and broad Office exclusions undermine rules meant to prevent Office‑driven attack chains; MED – Program Files binary (validate signer/publisher) might be C:\Program Files\Vendor\App\app.exe, which is typically safer because it’s not user writable but still requires validation to ensure it’s legitimate and signed; MED – ProgramData (shared, validate ownership) might be C:\ProgramData\AppCache\tool.exe, which can be abused because multiple processes can write there; HIGH – User-writable temp/cache (risky exclusion) might be C:\Users\Elliot\AppData\Local\Temp\payload.exe or C:\Users\Elliot\AppData\Local\Microsoft\Windows\INetCache\file.exe, which are high‑risk because attackers commonly stage payloads in writable directories; MED/HIGH – OneDrive user content (risky, scope narrowly) might be C:\Users\Elliot\OneDrive\Scripts\tool.exe where content is user controlled and externally synced; MED/HIGH – User profile path (scope narrowly) might be C:\Users\Elliot\Downloads\installer.exe, which is also attacker friendly; and UNKNOWN – Review required or UNKNOWN – No path captured simply means the telemetry did not give enough path detail to make a safe exclusion decision without reviewing the raw event.  Using these labels, analysts can decide whether to allow a single file, tune a configuration issue, or avoid an exclusion entirely, keeping ASR protections effective while minimizing business impact.
+
+Risk labels in this query help you quickly judge whether an ASR exclusion is safe or dangerous by categorizing the path that triggered the rule, because ASR rules are designed to block behaviors attackers commonly abuse and broad exclusions can reopen those attack paths.
+
+HIGH – Windows system binary (avoid excluding)  
+Examples:  
+- C:\Windows\System32\wscript.exe  
+- C:\Windows\System32\cmd.exe  
+These are common “living off the land” tools that attackers leverage, so excluding them weakens core protections.
+
+MED – Microsoft Office binary (avoid unless confirmed needed)  
+Examples:  
+- C:\Program Files\Microsoft Office\root\Office16\winword.exe  
+- Office add-in DLLs  
+Broad Office exclusions undermine rules meant to prevent Office-driven attack chains.
+
+MED – Program Files binary (validate signer/publisher)  
+Example:  
+- C:\Program Files\Vendor\App\app.exe  
+Typically safer because it’s not user writable but still requires validation to ensure it’s legitimate and signed.
+
+MED – ProgramData (shared, validate ownership)  
+Example:  
+- C:\ProgramData\AppCache\tool.exe  
+This directory can be abused because multiple processes can write there.
+
+HIGH – User-writable temp/cache (risky exclusion)  
+Examples:  
+- C:\Users\Elliot\AppData\Local\Temp\payload.exe  
+- C:\Users\Elliot\AppData\Local\Microsoft\Windows\INetCache\file.exe  
+These are high-risk because attackers commonly stage payloads in writable directories.
+
+MED/HIGH – OneDrive user content (risky, scope narrowly)  
+Example:  
+- C:\Users\Elliot\OneDrive\Scripts\tool.exe  
+Content here is user controlled and externally synced.
+
+MED/HIGH – User profile path (scope narrowly)  
+Example:  
+- C:\Users\Elliot\Downloads\installer.exe  
+This is also attacker friendly.
+
+UNKNOWN – Review required / No path captured  
+This means telemetry didn’t include enough detail to determine whether an exclusion is safe and requires reviewing the raw event.
+
+Using these labels, analysts can decide whether to allow a single file, tune a configuration issue, or avoid an exclusion entirely, keeping ASR protections effective while minimizing business impact.
 
 <img width="2983" height="1547" alt="image" src="https://github.com/user-attachments/assets/8a701149-b0fc-4790-80f4-98e5c69ca057" />
 
