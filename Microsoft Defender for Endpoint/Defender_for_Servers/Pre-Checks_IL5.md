@@ -6,13 +6,13 @@
 
 ---
 
-## 📋 HOW TO USE THIS GUIDE
+## HOW TO USE THIS GUIDE
 
 This guide provides **complete step-by-step instructions** for deploying Microsoft Defender for Endpoint (MDE) on Windows Servers in DoD environments while migrating from Trellix.
 Use the steps in the order shown below and validate each phase before proceeding.
 ---
 
-## 📑 TABLE OF CONTENTS
+## TABLE OF CONTENTS
 
 1. **Introduction** - Overview and deployment approach
 2. **Prerequisites** - Licensing, network, and access requirements
@@ -34,31 +34,31 @@ Use the steps in the order shown below and validate each phase before proceeding
 
 This guide enables migration from Trellix to Microsoft Defender for Endpoint (MDE) on Windows Servers in DoD (IL5/USGovDoD) environments using a **two-phase approach**:
 
-- **Phase A:** Deploy MDE in EDR Block mode alongside Trellix (coexistence)
-- **Phase B:** Transition MDAV to Active mode and disable Trellix
+* **Phase A:** Deploy MDE in EDR Block mode alongside Trellix (coexistence)
+* **Phase B:** Transition MDAV to Active mode and disable Trellix
 
-⚠️ **CRITICAL CONSTRAINT - Tamper Protection:**  
+ **CRITICAL CONSTRAINT - Tamper Protection:**  
 Once Tamper Protection is enabled and MDAV switches to Active mode (Phase B), it **CANNOT** be switched back to Phase A (EDR Block mode) on platform version 4.18.2208.0+. Phase B is a **one-way transition**. Ensure thorough testing before broad deployment.
 
 ---
 
 ## 2. PREREQUISITES
 
-### 2.1 Network Requirements &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#0078D4; font-size:0.85em;">⚡ **Verification:** Run `OCE.exe -EnvironmentName "USGovDoD"`</span>
+### 2.1 Network Requirements &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#0078D4; font-size:0.85em;"> **Verification:** Run `OCE.exe -EnvironmentName "USGovDoD"`</span>
 
 #### DoD MDE Endpoints (Streamlined Connectivity - Preview)
 
-⚠️ **Preview Status:** Streamlined connectivity is in PREVIEW for US Government. Fully patch Windows Servers before onboarding.
+ **Preview Status:** Streamlined connectivity is in PREVIEW for US Government. Fully patch Windows Servers before onboarding.
 
 **Applies to:** Windows Server 2019/2022/2025 and Windows Server 2016/2012 R2 with modern unified solution  
 **Legacy/MMA:** If any 2012 R2/2016 servers remain on legacy/MMA, also allow standard connectivity list
 
 **Important:** Streamlined connectivity reduces MDE service endpoints but does NOT eliminate dependencies for portal access, onboarding, identity, Live Response, and certificate validation.
 
-⚠️ **CRITICAL - Commercial (.com/.net) Endpoints Required for DoD:**  
+ **CRITICAL - Commercial (.com/.net) Endpoints Required for DoD:**  
 The following `.com`/`.net` endpoints are **REQUIRED** by Microsoft even for IL5 DoD environments and **CANNOT** be substituted with `.us`/`.mil` equivalents:
-- **Certificate Revocation/Validation** (`crl.microsoft.com`, `ctldl.windowsupdate.com`, `www.microsoft.com/pkiops/*`, `www.microsoft.com/pki/certs`) - Required by Windows OS for SSL/TLS certificate trust validation
-- **Live Response** (`*.wns.windows.com`, `login.live.com`, `login.microsoftonline.com`) - Required for Live Response functionality
+* **Certificate Revocation/Validation** (`crl.microsoft.com`, `ctldl.windowsupdate.com`, `www.microsoft.com/pkiops/*`, `www.microsoft.com/pki/certs`) - Required by Windows OS for SSL/TLS certificate trust validation
+* **Live Response** (`*.wns.windows.com`, `login.live.com`, `login.microsoftonline.com`) - Required for Live Response functionality
 
 **Minimum Required Endpoints (Core MDE Functionality):**
 
@@ -108,13 +108,13 @@ If Defender updates are not managed internally (WSUS/ConfigMgr/FileShare), allow
 
 #### Connectivity Validation
 
-- ☐ **Firewall rules configured** for all MDE endpoints (above)
-- ☐ **Firewall rules configured** for all Azure Arc endpoints (above, if using Defender for Servers Plan 2)
-- ☐ **Proxy configuration tested** (if applicable)
+* ☐ **Firewall rules configured** for all MDE endpoints (above)
+* ☐ **Firewall rules configured** for all Azure Arc endpoints (above, if using Defender for Servers Plan 2)
+* ☐ **Proxy configuration tested** (if applicable)
 
-- ☐ **Run MDE Connectivity Analyzer** on each server type to verify all endpoints are accessible
-  - Available from MDE Portal settings or Azure Arc guest configuration
-  - Verify all critical endpoints return successful connectivity
+* ☐ **Run MDE Connectivity Analyzer** on each server type to verify all endpoints are accessible
+  * Available from MDE Portal settings or Azure Arc guest configuration
+  * Verify all critical endpoints return successful connectivity
 
 ---
 
@@ -122,23 +122,23 @@ If Defender updates are not managed internally (WSUS/ConfigMgr/FileShare), allow
 
 **Complete this validation before starting any deployment:**
 
-### 3.1 System & Configuration &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#0078D4; font-size:0.85em;">⚡ **Validation:**
+### 3.1 System & Configuration &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#0078D4; font-size:0.85em;"> **Validation:**
 
 #### Third-Party EPP Configuration
 
-- ☐ **Third-Party EPP Exceptions**: Configure HBSS/Trellix/Tanium to exclude Microsoft Defender processes
-  - Download the MDE connectivity URL list from Microsoft Learn (US Gov): `https://learn.microsoft.com/defender-endpoint/standard-device-connectivity-urls-gov`
-  - Review Microsoft Defender Processes tab
-  - Ensure all required Microsoft Defender binaries are excluded from third-party EPP scanning
-  - Without these exclusions, conflicts will occur during Phase A coexistence (EDR Block mode)
+* ☐ **Third-Party EPP Exceptions**: Configure HBSS/Trellix/Tanium to exclude Microsoft Defender processes
+  * Download the MDE connectivity URL list from Microsoft Learn (US Gov): `https://learn.microsoft.com/defender-endpoint/standard-device-connectivity-urls-gov`
+  * Review Microsoft Defender Processes tab
+  * Ensure all required Microsoft Defender binaries are excluded from third-party EPP scanning
+  * Without these exclusions, conflicts will occur during Phase A coexistence (EDR Block mode)
 
 #### GPO Deployment
 
-- ☐ **Deploy MDE Configuration GPOs** (from DoD HBSS Divestment folder):
-  - MDE – Configurations GPO - Computer
-  - MDE – MDAV Trellix Exclusions GPO - Computer
-  - MDE – MDAV Tanium Exclusions GPO - Computer (if applicable)
-  - MDE – Device Control - Computer
+* ☐ **Deploy MDE Configuration GPOs** (from DoD HBSS Divestment folder):
+  * MDE – Configurations GPO - Computer
+  * MDE – MDAV Trellix Exclusions GPO - Computer
+  * MDE – MDAV Tanium Exclusions GPO - Computer (if applicable)
+  * MDE – Device Control - Computer
   
   **Verify GPO applied:**
   ```powershell
@@ -146,54 +146,54 @@ If Defender updates are not managed internally (WSUS/ConfigMgr/FileShare), allow
   # Verify MDE and exclusion GPOs appear in Applied Group Policy Objects
   ```
 
-- ☐ **Modify MDE – Configurations GPO settings:**
-  - Modify proxy settings if applicable (Set to Not Configured if not using proxy)
-  - Modify telemetry settings: Configure Connected User Experiences and Telemetry (Set to Not Configured if not using proxy)
-  - For Server 2012 R2, 2016, and 2019: MDAV will be in Passive Mode until Trellix is removed. Update GPP after Trellix uninstall to delete the registry entry.
-  - Update organization-specific contact information in Windows Security Enterprise Customizations
+* ☐ **Modify MDE – Configurations GPO settings:**
+  * Modify proxy settings if applicable (Set to Not Configured if not using proxy)
+  * Modify telemetry settings: Configure Connected User Experiences and Telemetry (Set to Not Configured if not using proxy)
+  * For Server 2012 R2, 2016, and 2019: MDAV will be in Passive Mode until Trellix is removed. Update GPP after Trellix uninstall to delete the registry entry.
+  * Update organization-specific contact information in Windows Security Enterprise Customizations
 
-- ☐ **Attack Surface Reduction (ASR) Rules** (configured in MDE – Configurations GPO):
-  - Review configured rules; keep higher impact rules in audit mode initially
-  - Recommended audit period: 30-60 days before enabling block enforcement
+* ☐ **Attack Surface Reduction (ASR) Rules** (configured in MDE – Configurations GPO):
+  * Review configured rules; keep higher impact rules in audit mode initially
+  * Recommended audit period: 30-60 days before enabling block enforcement
 
-- ☐ **Deploy Current STIGs** for all target servers: Windows Server 2012 R2, 2016, 2019, 2022, 2025 (as applicable), plus Microsoft Defender Antivirus and Windows Firewall STIGs
+* ☐ **Deploy Current STIGs** for all target servers: Windows Server 2012 R2, 2016, 2019, 2022, 2025 (as applicable), plus Microsoft Defender Antivirus and Windows Firewall STIGs
 
-- ☐ **Review Advanced Settings in MDE Portal** with the Federal MDE Pursuit Team before broad onboarding:
-  - Create device groups for customer before onboarding
-  - Review automation rules and alert thresholds
-  - Verify ASR rule audit data collection is configured
+* ☐ **Review Advanced Settings in MDE Portal** with the Federal MDE Pursuit Team before broad onboarding:
+  * Create device groups for customer before onboarding
+  * Review automation rules and alert thresholds
+  * Verify ASR rule audit data collection is configured
 
 #### Platform Version, Updates & Service Status
 
-- ☐ **Windows Defender feature check** (Server 2016 and 2019+):
+* ☐ **Windows Defender feature check** (Server 2016 and 2019+):
   ```powershell
   Get-WindowsFeature -name Windows-Defender
   Add-WindowsFeature -name Windows-Defender -includeallsubfeature
   ```
 
-- ☐ **Windows Defender service present and running**
+* ☐ **Windows Defender service present and running**
   ```powershell
   Get-Service -Name WinDefend
   Start-Service -Name WinDefend
   Set-Service -Name WinDefend -StartupType Automatic
   ```
 
-- ☐ **Verify Windows Defender components are current:**
+* ☐ **Verify Windows Defender components are current:**
   ```powershell
   Get-MpComputerStatus | Select-Object AMProductVersion
   Get-MpComputerStatus | Select-Object AMEngineVersion
   Get-MpComputerStatus | Select-Object AntivirusSignatureVersion, AntivirusSignatureLastUpdated
   ```
 
-- ☐ **Deploy Required Updates (Apply in sequence):**
+* ☐ **Deploy Required Updates (Apply in sequence):**
   1. **Security Intelligence Update (SIU)** - Target all Windows Servers
-     - Download: `http://aka.ms/siu64` or KB2267602
+     * Download: `http://aka.ms/siu64` or KB2267602
   2. **Platform Update (KB4052623)** - Target all Windows Servers
   3. **Sense EDR Update (KB5005292)** - Target only Windows Server 2012 R2 and 2016 with Unified agent
   
   **Action:** Update via Windows Update/WSUS if versions are outdated. Reboot after each update before proceeding.
   
-  - Verify updates applied:
+  * Verify updates applied:
     ```powershell
     Get-MpComputerStatus | Select-Object AMProductVersion, AMEngineVersion, AntivirusSignatureVersion
     ```
@@ -204,11 +204,11 @@ If Defender updates are not managed internally (WSUS/ConfigMgr/FileShare), allow
 
 #### Registry & Policy Configuration
 
-- ☐ **Verify Defender disablement policies are NOT present**
-  - `DisableAntiSpyware`, `DisableRealtimeMonitoring`, and `DisableBehaviorMonitoring` should be absent
-  - Group Policy: Computer Configuration → Administrative Templates → Windows Components → Microsoft Defender Antivirus → Turn off Microsoft Defender Antivirus = "Not Configured"
+* ☐ **Verify Defender disablement policies are NOT present**
+  * `DisableAntiSpyware`, `DisableRealtimeMonitoring`, and `DisableBehaviorMonitoring` should be absent
+  * Group Policy: Computer Configuration → Administrative Templates → Windows Components → Microsoft Defender Antivirus → Turn off Microsoft Defender Antivirus = "Not Configured"
 
-- ☐ **Run Group Policy Report**
+* ☐ **Run Group Policy Report**
   ```powershell
   gpresult /H C:\gpreport.html
   ```
@@ -228,40 +228,40 @@ If Defender updates are not managed internally (WSUS/ConfigMgr/FileShare), allow
 
 **Action Required:**
 
-- ☐ Review Group Policy Editor: `gpedit.msc` (or GPMC if domain-joined)
+* ☐ Review Group Policy Editor: `gpedit.msc` (or GPMC if domain-joined)
   ```powershell
   # Open Group Policy Editor
   gpedit.msc
   # Navigate to: Computer Configuration → Administrative Templates → Windows Components → Windows Defender
   ```
-- ☐ Check `Computer Configuration → Administrative Templates → Windows Components → Windows Defender`
-- ☐ Verify no policies are forcing Defender OFF
-- ☐ If domain-joined, check domain GPOs as well (using GPMC)
+* ☐ Check `Computer Configuration → Administrative Templates → Windows Components → Windows Defender`
+* ☐ Verify no policies are forcing Defender OFF
+* ☐ If domain-joined, check domain GPOs as well (using GPMC)
   ```powershell
   # Generate Active Directory Group Policy report
   gpresult /scope:computer /h C:\gpreport_domain.html
   # Review for conflicting Windows Defender policies
   ```
-- ☐ Document any Defender-disabling policies that must be modified before Phase A
+* ☐ Document any Defender-disabling policies that must be modified before Phase A
 
 **Important:** Do NOT disable Windows Defender Firewall if it's the primary firewall protection. Only disable if third-party firewall solution is managing network protection.
 
 ### 3.3 Exclusions Configuration
 
-- ☐ Trellix exclusions configured for MDAV/MDE binaries
+* ☐ Trellix exclusions configured for MDAV/MDE binaries
 
-- ☐ MDAV exclusions ready to apply for Trellix binaries
+* ☐ MDAV exclusions ready to apply for Trellix binaries
 
 ### 3.4 Pre-Flight Summary
 
-- ☐ **All critical checks passed?**
-  - All registry validations successful
-  - All GPO deployments verified applied
-  - All updates installed and verified
-  - All firewall rules configured
-  - All endpoint connectivity tests successful
-  - All exclusions configured
-  - All STIGs deployed
+* ☐ **All critical checks passed?**
+  * All registry validations successful
+  * All GPO deployments verified applied
+  * All updates installed and verified
+  * All firewall rules configured
+  * All endpoint connectivity tests successful
+  * All exclusions configured
+  * All STIGs deployed
 
 ---
 
@@ -271,46 +271,46 @@ Use this section as a final go/no-go check before broad deployment.
 
 ### Common Gotchas to Validate
 
-- ☐ **TLS trust chain is complete**
-  - Confirm required root/intermediate CAs are present in the local computer trust stores.
-  - Missing trust anchors can cause onboarding, portal sign-in, and update failures even when DNS/TCP checks pass.
+* ☐ **TLS trust chain is complete**
+  * Confirm required root/intermediate CAs are present in the local computer trust stores.
+  * Missing trust anchors can cause onboarding, portal sign-in, and update failures even when DNS/TCP checks pass.
 
-- ☐ **CRL/OCSP checks pass**
-  - Validate certificate revocation reachability (CRL/OCSP) from each server subnet.
-  - If these are blocked, TLS validation failures may appear as intermittent connectivity issues.
+* ☐ **CRL/OCSP checks pass**
+  * Validate certificate revocation reachability (CRL/OCSP) from each server subnet.
+  * If these are blocked, TLS validation failures may appear as intermittent connectivity issues.
 
-- ☐ **Proxy inspection is not breaking Defender traffic**
-  - If SSL inspection is enabled, verify Defender endpoints are excluded where required.
-  - Confirm the proxy does not rewrite certificates for critical Defender service URLs.
+* ☐ **Proxy inspection is not breaking Defender traffic**
+  * If SSL inspection is enabled, verify Defender endpoints are excluded where required.
+  * Confirm the proxy does not rewrite certificates for critical Defender service URLs.
 
-- ☐ **Third-party EDR self-protection/tamper controls are planned**
-  - Confirm approved maintenance-window procedure for Trellix policy relaxation or uninstall sequence.
-  - Ensure rollback owner and escalation path are documented before cutover.
+* ☐ **Third-party EDR self-protection/tamper controls are planned**
+  * Confirm approved maintenance-window procedure for Trellix policy relaxation or uninstall sequence.
+  * Ensure rollback owner and escalation path are documented before cutover.
 
-- ☐ **Mutual exclusions are verified both ways**
-  - Validate Trellix exclusions for Defender binaries.
-  - Validate Defender exclusions for Trellix binaries during coexistence window.
+* ☐ **Mutual exclusions are verified both ways**
+  * Validate Trellix exclusions for Defender binaries.
+  * Validate Defender exclusions for Trellix binaries during coexistence window.
 
-- ☐ **Defender policy conflicts are source-traced**
-  - Capture GPO name and link path for any setting forcing Defender off.
-  - Do not proceed until conflicting domain/local policies are remediated.
+* ☐ **Defender policy conflicts are source-traced**
+  * Capture GPO name and link path for any setting forcing Defender off.
+  * Do not proceed until conflicting domain/local policies are remediated.
 
-- ☐ **Service baseline is healthy before onboarding**
-  - `WinDefend` and `Sense` services running; platform/engine/signatures current
-  - Passive Mode registry entries present for Server 2012 R2, 2016, and 2019 (transition to Active Mode after Trellix removal)
+* ☐ **Service baseline is healthy before onboarding**
+  * `WinDefend` and `Sense` services running; platform/engine/signatures current
+  * Passive Mode registry entries present for Server 2012 R2, 2016, and 2019 (transition to Active Mode after Trellix removal)
 
-- ☐ **MDE Portal Advanced Settings are reviewed and aligned**
-  - Device groups created; automation/remediation rules set; ASR audit data collecting
+* ☐ **MDE Portal Advanced Settings are reviewed and aligned**
+  * Device groups created; automation/remediation rules set; ASR audit data collecting
 
-- ☐ **Onboarding timing expectations are communicated**
-  - Define expected time for device appearance and health status in the Defender portal
-  - Document who to contact if portal registration exceeds SLA
+* ☐ **Onboarding timing expectations are communicated**
+  * Define expected time for device appearance and health status in the Defender portal
+  * Document who to contact if portal registration exceeds SLA
 
-- ☐ **Pilot exit criteria are explicit**
-  - No app-impact regressions observed.
-  - Detection telemetry present and stable.
-  - CPU/memory utilization within agreed bounds.
+* ☐ **Pilot exit criteria are explicit**
+  * No app-impact regressions observed.
+  * Detection telemetry present and stable.
+  * CPU/memory utilization within agreed bounds.
 
-- ☐ **Post-cutover drift checks are scheduled**
-  - Weekly review for stale signatures, offboarded devices, broken telemetry, and policy drift.
+* ☐ **Post-cutover drift checks are scheduled**
+  * Weekly review for stale signatures, offboarded devices, broken telemetry, and policy drift.
 
