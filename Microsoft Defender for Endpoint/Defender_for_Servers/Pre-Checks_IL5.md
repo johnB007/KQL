@@ -1,8 +1,8 @@
-# MDE Windows On-Prem Server Deployment Guide for IL5
+# MDE Windows Server Deployment Guide for IL5 (On-Prem and Azure VMs)
 
 **Document Type:** Step-by-Step Deployment Guide  \
 **Environment:** DoD only (IL5 / USGovDoD)  \
-**Scope:** On-prem Windows Servers only (not Azure-hosted VMs)
+**Scope:** On-prem Windows Servers and Azure-hosted Windows VMs
 
 ---
 
@@ -84,9 +84,27 @@ The following `.com`/`.net` endpoints are **REQUIRED** by Microsoft even for IL5
 
 If Defender updates are not managed internally (WSUS/ConfigMgr/FileShare), allow the Microsoft Update security intelligence endpoints listed in the [standard connectivity documentation](https://learn.microsoft.com/defender-endpoint/standard-device-connectivity-urls-gov).
 
+#### Azure VM Additional Endpoints (DoD)
+
+Use this section when the same guide is used for native Azure VMs (Defender for Servers integration) in addition to on-prem servers.
+
+| Service | FQDN/URL | Port | Direction | Required | Notes |
+|---------|----------|------|-----------|----------|-------|
+| MDE Onboarding Package (DoD) | `https://onboardingpckgsusgvprd.blob.core.usgovcloudapi.net` | `443/TCP` | Outbound | Yes | Required to retrieve onboarding package content from Defender portal workflows. |
+| Defender Portal Dependencies | `https://*.microsoftonline-p.com` | `443/TCP` | Outbound | Yes | Required for Microsoft Defender portal authentication/content dependencies in Gov clouds. |
+| Defender Portal Dependencies | `https://secure.aadcdn.microsoftonline-p.com` | `443/TCP` | Outbound | Yes | Required for Defender portal sign-in/static auth assets. |
+| Defender Portal Dependencies | `https://static2.sharepointonline.com` | `443/TCP` | Outbound | Yes | Required for Defender portal static dependency loading. |
+| Defender Portal Storage Dependency | `*.blob.core.usgovcloudapi.net` | `443/TCP` | Outbound | Yes | Required by Defender portal and onboarding package/storage flows. |
+| Defender Telemetry | `events.data.microsoft.com` | `443/TCP` | Outbound | Conditional | Required in standard connectivity mode for Connected User Experiences/Telemetry channel. |
+| MAPS Cloud Protection (DoD) | `unitedstates2.cp.wd.microsoft.us` | `443/TCP` | Outbound | Conditional | Required for Defender Antivirus cloud-delivered protection in standard connectivity mode. |
+
+**Connectivity Mode Note:**
+* If you use streamlined connectivity, keep the streamlined DoD URL set as baseline.
+* If you use standard connectivity (or require cloud-delivered protection/telemetry paths), include the standard DoD endpoints above.
+
 ---
 
-#### Azure Arc Endpoints (Required for Defender for Servers Plan 2)
+#### Azure Arc Endpoints (Arc-enabled servers and multicloud/hybrid paths)
 
 | Service | FQDN/URL | Port | Direction | Required | Notes |
 |---------|----------|------|-----------|----------|-------|
