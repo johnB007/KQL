@@ -88,15 +88,21 @@ If Defender updates are not managed internally (WSUS/ConfigMgr/FileShare), allow
 
 Use this section when the same guide is used for native Azure VMs (Defender for Servers integration) in addition to on-prem servers.
 
+**Microsoft Learn references:**
+* Defender for Endpoint for US Government customers: https://learn.microsoft.com/defender-endpoint/gov#required-connectivity-settings
+* Microsoft Defender for Endpoint streamlined connectivity URLs for US government environments: https://learn.microsoft.com/defender-endpoint/streamlined-device-connectivity-urls-gov
+* Microsoft Defender for Endpoint standard connectivity URLs for US government: https://learn.microsoft.com/defender-endpoint/standard-device-connectivity-urls-gov
+* Enable Defender for Endpoint integration for Azure VMs: https://learn.microsoft.com/azure/defender-for-cloud/enable-defender-for-endpoint
+
 | Service | FQDN/URL | Port | Direction | Required | Notes |
 |---------|----------|------|-----------|----------|-------|
-| MDE Onboarding Package (DoD) | `https://onboardingpckgsusgvprd.blob.core.usgovcloudapi.net` | `443/TCP` | Outbound | Yes | Required to retrieve onboarding package content from Defender portal workflows. |
-| Defender Portal Dependencies | `https://*.microsoftonline-p.com` | `443/TCP` | Outbound | Yes | Required for Microsoft Defender portal authentication/content dependencies in Gov clouds. |
-| Defender Portal Dependencies | `https://secure.aadcdn.microsoftonline-p.com` | `443/TCP` | Outbound | Yes | Required for Defender portal sign-in/static auth assets. |
-| Defender Portal Dependencies | `https://static2.sharepointonline.com` | `443/TCP` | Outbound | Yes | Required for Defender portal static dependency loading. |
-| Defender Portal Storage Dependency | `*.blob.core.usgovcloudapi.net` | `443/TCP` | Outbound | Yes | Required by Defender portal and onboarding package/storage flows. |
-| Defender Telemetry | `events.data.microsoft.com` | `443/TCP` | Outbound | Conditional | Required in standard connectivity mode for Connected User Experiences/Telemetry channel. |
-| MAPS Cloud Protection (DoD) | `unitedstates2.cp.wd.microsoft.us` | `443/TCP` | Outbound | Conditional | Required for Defender Antivirus cloud-delivered protection in standard connectivity mode. |
+| MDE Onboarding Package (DoD) | `https://onboardingpckgsusgvprd.blob.core.usgovcloudapi.net` | `443/TCP` | Outbound | Yes | Required to retrieve onboarding package content from Defender portal workflows. Source: Defender for Endpoint for US Government customers. |
+| Defender Portal Dependencies | `https://*.microsoftonline-p.com` | `443/TCP` | Outbound | Yes | Required for Microsoft Defender portal authentication/content dependencies in Gov clouds. Source: Defender for Endpoint streamlined connectivity URLs for US government environments. |
+| Defender Portal Dependencies | `https://secure.aadcdn.microsoftonline-p.com` | `443/TCP` | Outbound | Yes | Required for Defender portal sign-in/static auth assets. Source: Defender for Endpoint streamlined connectivity URLs for US government environments. |
+| Defender Portal Dependencies | `https://static2.sharepointonline.com` | `443/TCP` | Outbound | Yes | Required for Defender portal static dependency loading. Source: Defender for Endpoint streamlined connectivity URLs for US government environments. |
+| Defender Portal Storage Dependency | `*.blob.core.usgovcloudapi.net` | `443/TCP` | Outbound | Yes | Required by Defender portal and onboarding package/storage flows. Source: Defender for Endpoint for US Government customers. |
+| Defender Telemetry | `events.data.microsoft.com` | `443/TCP` | Outbound | Conditional | Required in standard connectivity mode for Connected User Experiences/Telemetry channel. Source: Defender for Endpoint standard connectivity URLs for US government. |
+| MAPS Cloud Protection (DoD) | `unitedstates2.cp.wd.microsoft.us` | `443/TCP` | Outbound | Conditional | Required for Defender Antivirus cloud-delivered protection in standard connectivity mode. Source: Defender for Endpoint standard connectivity URLs for US government. |
 
 **Connectivity Mode Note:**
 * If you use streamlined connectivity, keep the streamlined DoD URL set as baseline.
