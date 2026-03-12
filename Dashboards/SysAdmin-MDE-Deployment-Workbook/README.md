@@ -83,7 +83,7 @@ Use one of the deployment buttons below.
 
 ### Deployment Inputs
 When the deployment blade opens, provide:
-- workspaceName: SOC-Central (or your target workspace name)
+- workspaceName: SOC-Central (or your target workspace name). If the portal kept text from a previous failed deployment, clear it and enter only the workspace name.
 - workbookDisplayName: SysAdmin MDE Deployment Workbook (or your preferred title)
 - workbookId: leave the default generated value, or provide your own GUID if you are updating an existing workbook instance
 
