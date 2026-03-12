@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <rect width="1280" height="720" fill="#0f172a"/>
+  <rect x="40" y="40" width="1200" height="80" rx="12" fill="#1e293b"/>
+  <text x="70" y="90" fill="#e2e8f0" font-size="32" font-family="Segoe UI, Arial">SysAdmin MDE Workbook - Overview Screenshot Placeholder</text>
+  <rect x="40" y="150" width="580" height="520" rx="12" fill="#1e293b"/>
+  <rect x="660" y="150" width="580" height="520" rx="12" fill="#1e293b"/>
+  <text x="70" y="190" fill="#94a3b8" font-size="26" font-family="Segoe UI, Arial">Left panel: KPI tiles and trend chart</text>
+  <text x="690" y="190" fill="#94a3b8" font-size="26" font-family="Segoe UI, Arial">Right panel: investigation grid</text>
+  <text x="70" y="640" fill="#64748b" font-size="22" font-family="Segoe UI, Arial">Replace with live screenshot after workbook validation</text>
+</svg>

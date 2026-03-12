@@ -10,6 +10,36 @@ It is designed for quick deployment and easy day-1 use with:
 - DLP USB activity views
 - Intune firewall policy evidence views
 
+## Summary For SOC And CISO
+This workbook gives SOC teams fast operational triage while also giving CISO leaders clear risk posture trends.
+
+- SOC focus: Find unhealthy endpoints, identify detection spikes, and prioritize remediation.
+- CISO focus: Track coverage, compliance, and operational effectiveness over time.
+
+### Tab Breakdown
+| Tab | SOC Use | CISO Use |
+|---|---|---|
+| Compliance | Find non-compliant systems by last check-in and prioritize follow-up. | Measure enterprise endpoint compliance rate and trend. |
+| EDR Sensor | Detect inactive or unhealthy EDR sensors before blind spots grow. | Confirm sensor health baseline across the environment. |
+| AV Sensor | Validate AV telemetry presence and identify stale/non-reporting devices. | Verify anti-malware coverage effectiveness at a glance. |
+| EDR/AV Install Status | Separate devices into EDR+AV, AV only, EDR only, and no coverage groups. | Understand tooling coverage gaps and exposure concentration. |
+| Firewall Events | Triage blocked/allowed patterns and investigate suspicious network behavior. | Review firewall activity posture and abnormal activity growth. |
+| Threat Events | Investigate incidents, severities, and source concentration quickly. | Track top threats, incident volume, and high-severity burden. |
+| DLP Events | Review USB/removable media events and potential exfiltration signals. | Monitor data protection control effectiveness and policy pressure. |
+| Intune Compliance | Correlate FW policy assignment with sync/compliance evidence. | Validate policy rollout quality and follow-up performance. |
+
+## Screenshot Placeholders
+Use these placeholders now, then replace each file with live screenshots after final validation.
+
+### Workbook Overview
+![Workbook Overview Placeholder](./images/placeholder-overview.svg)
+
+### Compliance Tab
+![Compliance Placeholder](./images/placeholder-compliance.svg)
+
+### Threat Events Tab
+![Threat Placeholder](./images/placeholder-threat.svg)
+
 ## Prerequisites
 - A Microsoft Sentinel-enabled Log Analytics workspace
 - Permissions to deploy ARM templates in the target resource group
