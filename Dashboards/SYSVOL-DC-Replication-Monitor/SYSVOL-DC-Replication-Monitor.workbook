@@ -2303,7 +2303,7 @@
           {
             "type": 1,
             "content": {
-              "json": "## Log Volume and Cost Estimation\nThis tab estimates ingestion volume using the billed-size field on records in the `Event` table. It is meant for rough budget forecasting and per-device cost visibility. Estimates below assume **$2.76 per GB** for Analytics logs and should be adjusted if your tenant uses commitment tiers or other pricing.",
+              "json": "## Log Volume and Cost Estimation\nIngestion is calculated from billable `Event` records only (`_IsBillable=true`) using `_BilledSize`.\nVolume uses decimal GB: `sum(_BilledSize) / 1,000,000,000`.\nCost = `VolumeGB x PricePerGB` (default $2.76), and 30-day projection = `DailyAvgGB x 30 x PricePerGB`.",
               "style": "info"
             },
             "name": "logvolume-header"
@@ -2313,7 +2313,7 @@
             "name": "logvolume-kpis",
             "content": {
               "version": "KqlItem/1.0",
-              "query": "let pricePerGB = 2.76;\nlet base = Event\n| where TimeGenerated {TimeRange}\n| where EventLog in (\"DFS Replication\",\"File Replication Service\",\"Directory Service\")\n| where \"value::all\" in ({Computers}) or Computer in ({Computers})\n| extend BilledBytes=todouble(coalesce(_BilledSize, 0.0));\nlet totalBytes = toscalar(base | summarize sum(BilledBytes));\nlet totalEvents = toscalar(base | count);\nlet totalGB = totalBytes / 1024.0 / 1024.0 / 1024.0;\nlet daysObserved = toscalar(base | summarize dcount(startofday(TimeGenerated)));\nlet normalizedDays = iff(daysObserved < 1, 1.0, todouble(daysObserved));\nlet dailyAvgGB = totalGB / normalizedDays;\nlet projected30DayGB = dailyAvgGB * 30.0;\nlet estimatedCostUSD = totalGB * pricePerGB;\nlet projected30DayCostUSD = projected30DayGB * pricePerGB;\nlet avgKBPerEvent = iff(totalEvents == 0, 0.0, (totalBytes / 1024.0) / totalEvents);\nprint Metric=\"Total Billed GB\", Value=round(totalGB, 4)\n| union (print Metric=\"Estimated Cost USD\", Value=round(estimatedCostUSD, 2))\n| union (print Metric=\"Daily Average GB\", Value=round(dailyAvgGB, 4))\n| union (print Metric=\"Projected 30-Day GB\", Value=round(projected30DayGB, 4))\n| union (print Metric=\"Projected 30-Day Cost USD\", Value=round(projected30DayCostUSD, 2))\n| union (print Metric=\"Average KB per Event\", Value=round(avgKBPerEvent, 2))",
+              "query": "let pricePerGB = 2.76;\nlet bytesPerGB = 1000000000.0;\nlet base = Event\n| where TimeGenerated {TimeRange}\n| where EventLog in (\"DFS Replication\",\"File Replication Service\",\"Directory Service\")\n| where \"value::all\" in ({Computers}) or Computer in ({Computers})\n| where tolower(tostring(coalesce(_IsBillable, \"true\"))) == \"true\"\n| extend BilledBytes=todouble(coalesce(_BilledSize, 0.0));\nlet totalBytes = toscalar(base | summarize sum(BilledBytes));\nlet totalEvents = toscalar(base | count);\nlet totalGB = totalBytes / bytesPerGB;\nlet daysObserved = toscalar(base | summarize dcount(startofday(TimeGenerated)));\nlet normalizedDays = iff(daysObserved < 1, 1.0, todouble(daysObserved));\nlet dailyAvgGB = totalGB / normalizedDays;\nlet projected30DayGB = dailyAvgGB * 30.0;\nlet estimatedCostUSD = totalGB * pricePerGB;\nlet projected30DayCostUSD = projected30DayGB * pricePerGB;\nlet avgKBPerEvent = iff(totalEvents == 0, 0.0, (totalBytes / 1000.0) / totalEvents);\nprint Metric=\"Total Billed GB\", Value=round(totalGB, 4)\n| union (print Metric=\"Estimated Cost USD\", Value=round(estimatedCostUSD, 2))\n| union (print Metric=\"Daily Average GB\", Value=round(dailyAvgGB, 4))\n| union (print Metric=\"Projected 30-Day GB\", Value=round(projected30DayGB, 4))\n| union (print Metric=\"Projected 30-Day Cost USD\", Value=round(projected30DayCostUSD, 2))\n| union (print Metric=\"Average KB per Event\", Value=round(avgKBPerEvent, 2))",
               "size": 4,
               "title": "Log Volume and Cost KPIs",
               "timeContextFromParameter": "TimeRange",
@@ -2348,7 +2348,7 @@
             "name": "logvolume-daily-trend",
             "content": {
               "version": "KqlItem/1.0",
-              "query": "Event\n| where TimeGenerated {TimeRange}\n| where EventLog in (\"DFS Replication\",\"File Replication Service\",\"Directory Service\")\n| where \"value::all\" in ({Computers}) or Computer in ({Computers})\n| extend BilledGB=todouble(coalesce(_BilledSize, 0.0)) / 1024.0 / 1024.0 / 1024.0\n| summarize TotalGB=round(sum(BilledGB), 4) by bin(TimeGenerated, 1d), EventLog\n| order by TimeGenerated asc",
+              "query": "Event\n| where TimeGenerated {TimeRange}\n| where EventLog in (\"DFS Replication\",\"File Replication Service\",\"Directory Service\")\n| where \"value::all\" in ({Computers}) or Computer in ({Computers})\n| where tolower(tostring(coalesce(_IsBillable, \"true\"))) == \"true\"\n| extend BilledGB=todouble(coalesce(_BilledSize, 0.0)) / 1000000000.0\n| summarize TotalGB=round(sum(BilledGB), 4) by bin(TimeGenerated, 1d), EventLog\n| order by TimeGenerated asc",
               "size": 0,
               "title": "Daily Billed GB by Log Source",
               "timeContextFromParameter": "TimeRange",
@@ -2365,7 +2365,7 @@
             "name": "logvolume-by-source",
             "content": {
               "version": "KqlItem/1.0",
-              "query": "let pricePerGB = 2.76;\nEvent\n| where TimeGenerated {TimeRange}\n| where EventLog in (\"DFS Replication\",\"File Replication Service\",\"Directory Service\")\n| where \"value::all\" in ({Computers}) or Computer in ({Computers})\n| extend BilledBytes=todouble(coalesce(_BilledSize, 0.0))\n| summarize Events=count(), TotalGB=round(sum(BilledBytes) / 1024.0 / 1024.0 / 1024.0, 4) by EventLog\n| extend EstimatedCostUSD=round(TotalGB * pricePerGB, 2)\n| order by TotalGB desc",
+              "query": "let pricePerGB = 2.76;\nlet bytesPerGB = 1000000000.0;\nEvent\n| where TimeGenerated {TimeRange}\n| where EventLog in (\"DFS Replication\",\"File Replication Service\",\"Directory Service\")\n| where \"value::all\" in ({Computers}) or Computer in ({Computers})\n| where tolower(tostring(coalesce(_IsBillable, \"true\"))) == \"true\"\n| extend BilledBytes=todouble(coalesce(_BilledSize, 0.0))\n| summarize Events=count(), TotalBytes=sum(BilledBytes) by EventLog\n| extend TotalGB=round(TotalBytes / bytesPerGB, 4)\n| extend EstimatedCostUSD=round((TotalBytes / bytesPerGB) * pricePerGB, 2)\n| order by TotalGB desc",
               "size": 0,
               "title": "Billed GB by Log Source",
               "timeContextFromParameter": "TimeRange",
@@ -2408,7 +2408,7 @@
             "name": "logvolume-top-dcs-chart",
             "content": {
               "version": "KqlItem/1.0",
-              "query": "Event\n| where TimeGenerated {TimeRange}\n| where EventLog in (\"DFS Replication\",\"File Replication Service\",\"Directory Service\")\n| where \"value::all\" in ({Computers}) or Computer in ({Computers})\n| extend BilledGB=todouble(coalesce(_BilledSize, 0.0)) / 1024.0 / 1024.0 / 1024.0\n| summarize TotalGB=round(sum(BilledGB), 4) by Computer\n| top 20 by TotalGB desc",
+              "query": "Event\n| where TimeGenerated {TimeRange}\n| where EventLog in (\"DFS Replication\",\"File Replication Service\",\"Directory Service\")\n| where \"value::all\" in ({Computers}) or Computer in ({Computers})\n| where tolower(tostring(coalesce(_IsBillable, \"true\"))) == \"true\"\n| extend BilledGB=todouble(coalesce(_BilledSize, 0.0)) / 1000000000.0\n| summarize TotalGB=round(sum(BilledGB), 4) by Computer\n| top 20 by TotalGB desc",
               "size": 0,
               "title": "Top 20 DCs by Billed GB",
               "timeContextFromParameter": "TimeRange",
@@ -2426,7 +2426,7 @@
             "name": "logvolume-by-device",
             "content": {
               "version": "KqlItem/1.0",
-              "query": "let pricePerGB = 2.76;\nEvent\n| where TimeGenerated {TimeRange}\n| where EventLog in (\"DFS Replication\",\"File Replication Service\",\"Directory Service\")\n| where \"value::all\" in ({Computers}) or Computer in ({Computers})\n| extend BilledBytes=todouble(coalesce(_BilledSize, 0.0))\n| summarize EventCount=count(), TotalBytes=sum(BilledBytes), FirstSeen=min(TimeGenerated), LastSeen=max(TimeGenerated), ActiveDays=dcount(startofday(TimeGenerated)) by Computer\n| extend NormalizedDays=iff(ActiveDays < 1, 1.0, todouble(ActiveDays))\n| extend TotalGB=round(TotalBytes / 1024.0 / 1024.0 / 1024.0, 4)\n| extend AvgKBPerEvent=round(iff(EventCount == 0, 0.0, (TotalBytes / 1024.0) / EventCount), 2)\n| extend DailyAvgGB=round(TotalGB / NormalizedDays, 4)\n| extend Projected30DayGB=round(DailyAvgGB * 30.0, 4)\n| extend Estimated30DayCostUSD=round(Projected30DayGB * pricePerGB, 2)\n| order by TotalGB desc\n| project Computer, EventCount, TotalGB, AvgKBPerEvent, DailyAvgGB, Projected30DayGB, Estimated30DayCostUSD, FirstSeen, LastSeen",
+              "query": "let pricePerGB = 2.76;\nlet bytesPerGB = 1000000000.0;\nEvent\n| where TimeGenerated {TimeRange}\n| where EventLog in (\"DFS Replication\",\"File Replication Service\",\"Directory Service\")\n| where \"value::all\" in ({Computers}) or Computer in ({Computers})\n| where tolower(tostring(coalesce(_IsBillable, \"true\"))) == \"true\"\n| extend BilledBytes=todouble(coalesce(_BilledSize, 0.0))\n| summarize EventCount=count(), TotalBytes=sum(BilledBytes), FirstSeen=min(TimeGenerated), LastSeen=max(TimeGenerated), ActiveDays=dcount(startofday(TimeGenerated)) by Computer\n| extend NormalizedDays=iff(ActiveDays < 1, 1.0, todouble(ActiveDays))\n| extend TotalGBRaw=TotalBytes / bytesPerGB\n| extend AvgKBPerEventRaw=iff(EventCount == 0, 0.0, (TotalBytes / 1000.0) / EventCount)\n| extend DailyAvgGBRaw=TotalGBRaw / NormalizedDays\n| extend Projected30DayGBRaw=DailyAvgGBRaw * 30.0\n| extend Estimated30DayCostUSDRaw=Projected30DayGBRaw * pricePerGB\n| order by TotalGBRaw desc\n| project Computer, EventCount, TotalGB=round(TotalGBRaw, 4), AvgKBPerEvent=round(AvgKBPerEventRaw, 2), DailyAvgGB=round(DailyAvgGBRaw, 4), Projected30DayGB=round(Projected30DayGBRaw, 4), Estimated30DayCostUSD=round(Estimated30DayCostUSDRaw, 2), FirstSeen, LastSeen",
               "size": 0,
               "title": "Per-Device Log Volume and 30-Day Cost Estimate",
               "timeContextFromParameter": "TimeRange",
@@ -2482,7 +2482,7 @@
             "name": "logvolume-by-device-source",
             "content": {
               "version": "KqlItem/1.0",
-              "query": "let pricePerGB = 2.76;\nEvent\n| where TimeGenerated {TimeRange}\n| where EventLog in (\"DFS Replication\",\"File Replication Service\",\"Directory Service\")\n| where \"value::all\" in ({Computers}) or Computer in ({Computers})\n| extend BilledBytes=todouble(coalesce(_BilledSize, 0.0))\n| summarize Events=count(), TotalGB=round(sum(BilledBytes) / 1024.0 / 1024.0 / 1024.0, 4) by Computer, EventLog\n| extend EstimatedCostUSD=round(TotalGB * pricePerGB, 2)\n| order by TotalGB desc\n| take 200",
+              "query": "let pricePerGB = 2.76;\nlet bytesPerGB = 1000000000.0;\nEvent\n| where TimeGenerated {TimeRange}\n| where EventLog in (\"DFS Replication\",\"File Replication Service\",\"Directory Service\")\n| where \"value::all\" in ({Computers}) or Computer in ({Computers})\n| where tolower(tostring(coalesce(_IsBillable, \"true\"))) == \"true\"\n| extend BilledBytes=todouble(coalesce(_BilledSize, 0.0))\n| summarize Events=count(), TotalBytes=sum(BilledBytes) by Computer, EventLog\n| extend TotalGB=round(TotalBytes / bytesPerGB, 4)\n| extend EstimatedCostUSD=round((TotalBytes / bytesPerGB) * pricePerGB, 2)\n| order by TotalGB desc\n| take 200",
               "size": 0,
               "title": "Per-Device and Per-Source Volume Detail",
               "timeContextFromParameter": "TimeRange",
