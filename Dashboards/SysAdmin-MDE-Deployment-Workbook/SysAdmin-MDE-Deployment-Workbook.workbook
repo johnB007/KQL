@@ -1122,7 +1122,7 @@
           {
             "type": 1,
             "content": {
-              "json": "**DLP Events — USB / Removable Media** — USB Mass Storage connections · file writes within 900s of connection &nbsp;·&nbsp; Sources: `DeviceEvents` · `DeviceFileEvents` · Follows Time Range selector",
+              "json": "**DLP Events — USB / Removable Media** — USB Mass Storage connections correlated with removable-media file writes &nbsp;·&nbsp; Trend chart shows all matching activity over time · detail grid shows the latest 250 events &nbsp;·&nbsp; Sources: `DeviceEvents` · `DeviceFileEvents` · Follows Time Range selector",
               "style": "info"
             },
             "name": "text-dlp-header"
@@ -1131,9 +1131,9 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "let DeviceNameToSearch = '';\nlet Connections =\nDeviceEvents\n| where Timestamp {TimeRange}\n| where (isempty(DeviceNameToSearch) or DeviceName =~ DeviceNameToSearch)\n| where ActionType == 'PnpDeviceConnected'\n| extend parsed = parse_json(AdditionalFields)\n| project\n    DeviceId,\n    DeviceName,\n    ConnectionTime = Timestamp,\n    DeviceClass = tostring(parsed.ClassName),\n    UsbDeviceId = tostring(parsed.DeviceId),\n    ClassId = tostring(parsed.DeviceId),\n    DeviceDescription = tostring(parsed.DeviceDescription),\n    VendorIds = tostring(parsed.VendorIds)\n| where DeviceClass == 'USB'\n| where DeviceDescription == 'USB Mass Storage Device';\nlet UsbWrites =\nDeviceFileEvents\n| where Timestamp {TimeRange}\n| where (isempty(DeviceNameToSearch) or DeviceName =~ DeviceNameToSearch)\n| where FolderPath !startswith 'c'\n| where FolderPath !startswith @'\\'\n| join kind=inner Connections on DeviceId;\nlet SpanDays =\n    toscalar(\n        UsbWrites\n        | summarize spanDays = todouble(datetime_diff('day', max(Timestamp), min(Timestamp)))\n    );\nlet BinSize = case(\n    isnull(SpanDays), 1d,\n    SpanDays <= 31, 1d,\n    SpanDays <= 120, 2d,\n    SpanDays <= 365, 7d,\n    SpanDays <= 730, 14d,\n    30d\n);\nUsbWrites\n| extend ApprovalStatus = 'USB Write Activity'\n| summarize IncidentCount = count() by ['Last Update'] = bin(Timestamp, BinSize), ApprovalStatus\n| order by ['Last Update'] asc",
+              "query": "let DeviceNameToSearch = '';\nlet Connections =\nDeviceEvents\n| where Timestamp {TimeRange}\n| where (isempty(DeviceNameToSearch) or DeviceName =~ DeviceNameToSearch)\n| where ActionType == 'PnpDeviceConnected'\n| extend parsed = parse_json(AdditionalFields)\n| project\n    DeviceId,\n    DeviceName,\n    ConnectionTime = Timestamp,\n    DeviceClass = tostring(parsed.ClassName),\n    UsbDeviceId = tostring(parsed.DeviceId),\n    ClassId = tostring(parsed.DeviceId),\n    DeviceDescription = tostring(parsed.DeviceDescription),\n    VendorIds = tostring(parsed.VendorIds)\n| where DeviceClass == 'USB'\n| where DeviceDescription == 'USB Mass Storage Device';\nlet UsbWrites =\nDeviceFileEvents\n| where Timestamp {TimeRange}\n| where (isempty(DeviceNameToSearch) or DeviceName =~ DeviceNameToSearch)\n| where FolderPath !startswith 'c'\n| where FolderPath !startswith @'\\'\n| join kind=inner Connections on DeviceId;\nlet SpanDays =\n    toscalar(\n        UsbWrites\n        | summarize spanDays = todouble(datetime_diff('day', max(Timestamp), min(Timestamp)))\n    );\nlet BinSize = case(\n    isnull(SpanDays), 1d,\n    SpanDays <= 31, 1d,\n    SpanDays <= 120, 2d,\n    SpanDays <= 365, 7d,\n    SpanDays <= 730, 14d,\n    30d\n);\nUsbWrites\n| summarize IncidentCount = count() by ['Last Update'] = bin(Timestamp, BinSize)\n| order by ['Last Update'] asc",
               "size": 1,
-              "title": "Weekly DLP: Number of USB Incidents per day (approved/not approved)",
+              "title": "USB Write Activity Trend",
               "timeContextFromParameter": "TimeRange",
               "queryType": 0,
               "resourceType": "microsoft.operationalinsights/workspaces",
@@ -1151,19 +1151,7 @@
                       "maximumFractionDigits": 0
                     }
                   }
-                },
-                "seriesLabelSettings": [
-                  {
-                    "seriesName": "Approved",
-                    "label": "Approved USB Devices",
-                    "color": "green"
-                  },
-                  {
-                    "seriesName": "Not Approved",
-                    "label": "Unapproved USB Devices",
-                    "color": "red"
-                  }
-                ]
+                }
               }
             },
             "customWidth": "100",
@@ -1175,7 +1163,7 @@
               "version": "KqlItem/1.0",
               "query": "let DeviceNameToSearch = '';\nlet Connections =\nDeviceEvents\n| where Timestamp {TimeRange}\n| where (isempty(DeviceNameToSearch) or DeviceName =~ DeviceNameToSearch) and ActionType == 'PnpDeviceConnected'\n| extend parsed = parse_json(AdditionalFields)\n| project DeviceId, DeviceName, ConnectionTime = Timestamp, DeviceClass = tostring(parsed.ClassName), UsbDeviceId = tostring(parsed.DeviceId), ClassId = tostring(parsed.DeviceId), DeviceDescription = tostring(parsed.DeviceDescription), VendorIds = tostring(parsed.VendorIds)\n| where DeviceClass == 'USB' and DeviceDescription == 'USB Mass Storage Device';\nDeviceFileEvents\n| where Timestamp {TimeRange}\n| where (isempty(DeviceNameToSearch) or DeviceName =~ DeviceNameToSearch) and FolderPath !startswith 'c' and FolderPath !startswith @'\\'\n| join kind=inner Connections on DeviceId\n| top 250 by Timestamp desc\n| project ['Last Update']=Timestamp, DeviceName, InitiatingProcessAccountName, DeviceClass, DeviceDescription, FileName",
               "size": 2,
-              "title": "DLP Event Details (USB Enriched)",
+              "title": "Recent USB Write Activity Details (Top 250)",
               "timeContextFromParameter": "TimeRange",
               "showExportToExcel": true,
               "queryType": 0,
