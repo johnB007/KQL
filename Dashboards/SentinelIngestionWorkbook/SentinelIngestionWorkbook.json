@@ -50,7 +50,8 @@
               "additionalResourceOptions": [],
               "showDefault": false
             },
-            "jsonData": "[{ \"value\": \"Yes\", \"label\": \"Yes\"},\r\n {\"value\": \"No\", \"label\": \"No\", \"selected\":true }]"
+            "jsonData": "[{ \"value\": \"Yes\", \"label\": \"Yes\"},\r\n {\"value\": \"No\", \"label\": \"No\", \"selected\":true }]",
+            "value": "Yes"
           },
           {
             "id": "a1b2c3d4-0001-0001-0001-000000000001",
@@ -58,7 +59,6 @@
             "name": "SelectedDataType",
             "label": "Selected Data Type",
             "type": 2,
-            "isRequired": false,
             "query": "Usage\n| where IsBillable == true\n| summarize by DataType\n| order by DataType asc",
             "queryType": 0,
             "resourceType": "microsoft.operationalinsights/workspaces",
@@ -67,7 +67,8 @@
               "additionalResourceOptions": [],
               "showDefault": false,
               "noItemsMessage": "No data types found in selected time range"
-            }
+            },
+            "value": null
           },
           {
             "id": "a1b2c3d4-0002-0002-0002-000000000002",
@@ -75,7 +76,6 @@
             "name": "SelectedVendor",
             "label": "Selected Vendor",
             "type": 2,
-            "isRequired": false,
             "query": "union DeviceFileEvents, DeviceNetworkEvents, DeviceProcessEvents,\n      DeviceRegistryEvents, DeviceImageLoadEvents, DeviceEvents\n| where InitiatingProcessVersionInfoCompanyName !startswith 'Microsoft'\n    and InitiatingProcessVersionInfoCompanyName !startswith 'Google'\n    and isnotempty(InitiatingProcessVersionInfoCompanyName)\n| summarize by InitiatingProcessVersionInfoCompanyName\n| order by InitiatingProcessVersionInfoCompanyName asc",
             "queryType": 0,
             "resourceType": "microsoft.operationalinsights/workspaces",
@@ -84,7 +84,8 @@
               "additionalResourceOptions": [],
               "showDefault": false,
               "noItemsMessage": "No third-party vendors found in selected time range"
-            }
+            },
+            "value": null
           }
         ],
         "style": "pills",
@@ -96,7 +97,7 @@
     {
       "type": 1,
       "content": {
-        "json": "Select a tab above to explore ingestion volumes by data type. Click any row in a summary table to see daily trends and export data using the **⬇ Download** icon that appears in the table header.",
+        "json": "MDE Top 6 tables. Select a tab above to explore ingestion volumes by data type/vendor. Click any row in a summary table to see daily trends and export data using the **⬇ Download** icon that appears in the table header. Email jobarbar@microsoft.com for any issues. ",
         "style": "upsell"
       },
       "conditionalVisibility": {
@@ -191,7 +192,6 @@
     },
     {
       "type": 12,
-      "name": "Ingestion",
       "content": {
         "version": "NotebookGroup/1.0",
         "groupType": "editable",
@@ -266,13 +266,8 @@
                     }
                   }
                 ],
+                "rowLimit": 200,
                 "filter": true,
-                "sortBy": [
-                  {
-                    "itemKey": "Total_GB",
-                    "sortOrder": 2
-                  }
-                ],
                 "labelSettings": [
                   {
                     "columnId": "DataType",
@@ -291,22 +286,20 @@
                     "label": "Daily Avg (GB)"
                   },
                   {
+                    "columnId": "Monthly_Proj_GB",
+                    "label": "30-Day Projection (GB)"
+                  },
+                  {
                     "columnId": "Peak_Day_GB",
                     "label": "Peak Day (GB)"
                   },
                   {
                     "columnId": "Days_Active",
                     "label": "Days Active"
-                  },
-                  {
-                    "columnId": "Monthly_Proj_GB",
-                    "label": "30-Day Projection (GB)"
                   }
-                ],
-                "exportAllFields": true,
-                "rowLimit": 200,
-                "showExportToExcel": true
-              }
+                ]
+              },
+              "sortBy": []
             },
             "name": "table-First-summary"
           },
@@ -370,10 +363,14 @@
                     "itemKey": "Day",
                     "sortOrder": 2
                   }
-                ],
-                "exportAllFields": true,
-                "showExportToExcel": true
-              }
+                ]
+              },
+              "sortBy": [
+                {
+                  "itemKey": "Day",
+                  "sortOrder": 2
+                }
+              ]
             },
             "conditionalVisibility": {
               "parameterName": "SelectedDataType",
@@ -388,11 +385,11 @@
         "parameterName": "Tab",
         "comparison": "isEqualTo",
         "value": "First"
-      }
+      },
+      "name": "Ingestion"
     },
     {
       "type": 12,
-      "name": "Device Related Tables",
       "content": {
         "version": "NotebookGroup/1.0",
         "groupType": "editable",
@@ -467,13 +464,8 @@
                     }
                   }
                 ],
+                "rowLimit": 200,
                 "filter": true,
-                "sortBy": [
-                  {
-                    "itemKey": "Total_GB",
-                    "sortOrder": 2
-                  }
-                ],
                 "labelSettings": [
                   {
                     "columnId": "DataType",
@@ -492,22 +484,20 @@
                     "label": "Daily Avg (GB)"
                   },
                   {
+                    "columnId": "Monthly_Proj_GB",
+                    "label": "30-Day Projection (GB)"
+                  },
+                  {
                     "columnId": "Peak_Day_GB",
                     "label": "Peak Day (GB)"
                   },
                   {
                     "columnId": "Days_Active",
                     "label": "Days Active"
-                  },
-                  {
-                    "columnId": "Monthly_Proj_GB",
-                    "label": "30-Day Projection (GB)"
                   }
-                ],
-                "exportAllFields": true,
-                "rowLimit": 200,
-                "showExportToExcel": true
-              }
+                ]
+              },
+              "sortBy": []
             },
             "name": "table-Second-summary"
           },
@@ -571,10 +561,14 @@
                     "itemKey": "Day",
                     "sortOrder": 2
                   }
-                ],
-                "exportAllFields": true,
-                "showExportToExcel": true
-              }
+                ]
+              },
+              "sortBy": [
+                {
+                  "itemKey": "Day",
+                  "sortOrder": 2
+                }
+              ]
             },
             "conditionalVisibility": {
               "parameterName": "SelectedDataType",
@@ -589,11 +583,11 @@
         "parameterName": "Tab",
         "comparison": "isEqualTo",
         "value": "Second"
-      }
+      },
+      "name": "Device Related Tables"
     },
     {
       "type": 12,
-      "name": "Non Device Events",
       "content": {
         "version": "NotebookGroup/1.0",
         "groupType": "editable",
@@ -668,13 +662,8 @@
                     }
                   }
                 ],
+                "rowLimit": 200,
                 "filter": true,
-                "sortBy": [
-                  {
-                    "itemKey": "Total_GB",
-                    "sortOrder": 2
-                  }
-                ],
                 "labelSettings": [
                   {
                     "columnId": "DataType",
@@ -693,22 +682,20 @@
                     "label": "Daily Avg (GB)"
                   },
                   {
+                    "columnId": "Monthly_Proj_GB",
+                    "label": "30-Day Projection (GB)"
+                  },
+                  {
                     "columnId": "Peak_Day_GB",
                     "label": "Peak Day (GB)"
                   },
                   {
                     "columnId": "Days_Active",
                     "label": "Days Active"
-                  },
-                  {
-                    "columnId": "Monthly_Proj_GB",
-                    "label": "30-Day Projection (GB)"
                   }
-                ],
-                "exportAllFields": true,
-                "rowLimit": 200,
-                "showExportToExcel": true
-              }
+                ]
+              },
+              "sortBy": []
             },
             "name": "table-Fifth-summary"
           },
@@ -772,10 +759,14 @@
                     "itemKey": "Day",
                     "sortOrder": 2
                   }
-                ],
-                "exportAllFields": true,
-                "showExportToExcel": true
-              }
+                ]
+              },
+              "sortBy": [
+                {
+                  "itemKey": "Day",
+                  "sortOrder": 2
+                }
+              ]
             },
             "conditionalVisibility": {
               "parameterName": "SelectedDataType",
@@ -790,7 +781,8 @@
         "parameterName": "Tab",
         "comparison": "isEqualTo",
         "value": "Fifth"
-      }
+      },
+      "name": "Non Device Events"
     },
     {
       "type": 12,
@@ -855,14 +847,8 @@
                     }
                   }
                 ],
-                "filter": true,
-                "sortBy": [
-                  {
-                    "itemKey": "EventCount",
-                    "sortOrder": 2
-                  }
-                ],
                 "rowLimit": 100,
+                "filter": true,
                 "labelSettings": [
                   {
                     "columnId": "InitiatingProcessVersionInfoCompanyName",
@@ -884,10 +870,9 @@
                     "columnId": "TotalFileSize_MB",
                     "label": "Total File Size (MB)"
                   }
-                ],
-                "exportAllFields": true,
-                "showExportToExcel": true
-              }
+                ]
+              },
+              "sortBy": []
             },
             "name": "selector-Third"
           },
@@ -912,6 +897,7 @@
               "size": 1,
               "title": "Process Detail — {SelectedVendor} (DeviceFileEvents)",
               "timeContextFromParameter": "TimePicker",
+              "showExportToExcel": true,
               "queryType": 0,
               "resourceType": "microsoft.operationalinsights/workspaces",
               "visualization": "table",
@@ -935,14 +921,6 @@
                   }
                 ],
                 "filter": true,
-                "sortBy": [
-                  {
-                    "itemKey": "EventCount",
-                    "sortOrder": 2
-                  }
-                ],
-                "rowLimit": 250,
-                "exportAllFields": true,
                 "labelSettings": [
                   {
                     "columnId": "InitiatingProcessVersionInfoCompanyName",
@@ -996,9 +974,9 @@
                     "columnId": "UniqueTargetPaths",
                     "label": "Unique Target Paths"
                   }
-                ],
-                "showExportToExcel": true
-              }
+                ]
+              },
+              "sortBy": []
             },
             "conditionalVisibility": {
               "parameterName": "SelectedVendor",
@@ -1030,13 +1008,6 @@
                   }
                 ],
                 "filter": true,
-                "sortBy": [
-                  {
-                    "itemKey": "EventCount",
-                    "sortOrder": 2
-                  }
-                ],
-                "exportAllFields": true,
                 "labelSettings": [
                   {
                     "columnId": "ActionType",
@@ -1054,9 +1025,9 @@
                     "columnId": "UniqueFiles",
                     "label": "Unique Files"
                   }
-                ],
-                "showExportToExcel": true
-              }
+                ]
+              },
+              "sortBy": []
             },
             "conditionalVisibility": {
               "parameterName": "SelectedVendor",
@@ -1088,13 +1059,6 @@
                   }
                 ],
                 "filter": true,
-                "sortBy": [
-                  {
-                    "itemKey": "EventCount",
-                    "sortOrder": 2
-                  }
-                ],
-                "exportAllFields": true,
                 "labelSettings": [
                   {
                     "columnId": "DeviceName",
@@ -1108,9 +1072,9 @@
                     "columnId": "UniqueProcesses",
                     "label": "Unique Processes"
                   }
-                ],
-                "showExportToExcel": true
-              }
+                ]
+              },
+              "sortBy": []
             },
             "conditionalVisibility": {
               "parameterName": "SelectedVendor",
@@ -1210,14 +1174,8 @@
                     }
                   }
                 ],
-                "filter": true,
-                "sortBy": [
-                  {
-                    "itemKey": "EventCount",
-                    "sortOrder": 2
-                  }
-                ],
                 "rowLimit": 100,
+                "filter": true,
                 "labelSettings": [
                   {
                     "columnId": "InitiatingProcessVersionInfoCompanyName",
@@ -1243,10 +1201,9 @@
                     "columnId": "UniquePorts",
                     "label": "Unique Ports"
                   }
-                ],
-                "exportAllFields": true,
-                "showExportToExcel": true
-              }
+                ]
+              },
+              "sortBy": []
             },
             "name": "selector-Fourth"
           },
@@ -1271,6 +1228,7 @@
               "size": 1,
               "title": "Process Detail — {SelectedVendor} (DeviceNetworkEvents)",
               "timeContextFromParameter": "TimePicker",
+              "showExportToExcel": true,
               "queryType": 0,
               "resourceType": "microsoft.operationalinsights/workspaces",
               "visualization": "table",
@@ -1294,14 +1252,6 @@
                   }
                 ],
                 "filter": true,
-                "sortBy": [
-                  {
-                    "itemKey": "EventCount",
-                    "sortOrder": 2
-                  }
-                ],
-                "rowLimit": 250,
-                "exportAllFields": true,
                 "labelSettings": [
                   {
                     "columnId": "InitiatingProcessVersionInfoCompanyName",
@@ -1347,9 +1297,9 @@
                     "columnId": "UniqueRemoteUrls",
                     "label": "Unique Remote URLs"
                   }
-                ],
-                "showExportToExcel": true
-              }
+                ]
+              },
+              "sortBy": []
             },
             "conditionalVisibility": {
               "parameterName": "SelectedVendor",
@@ -1381,13 +1331,6 @@
                   }
                 ],
                 "filter": true,
-                "sortBy": [
-                  {
-                    "itemKey": "EventCount",
-                    "sortOrder": 2
-                  }
-                ],
-                "exportAllFields": true,
                 "labelSettings": [
                   {
                     "columnId": "RemoteUrl",
@@ -1417,9 +1360,9 @@
                     "columnId": "UniqueDevices",
                     "label": "Unique Devices"
                   }
-                ],
-                "showExportToExcel": true
-              }
+                ]
+              },
+              "sortBy": []
             },
             "conditionalVisibility": {
               "parameterName": "SelectedVendor",
@@ -1451,13 +1394,6 @@
                   }
                 ],
                 "filter": true,
-                "sortBy": [
-                  {
-                    "itemKey": "EventCount",
-                    "sortOrder": 2
-                  }
-                ],
-                "exportAllFields": true,
                 "labelSettings": [
                   {
                     "columnId": "DeviceName",
@@ -1471,9 +1407,9 @@
                     "columnId": "UniqueProcesses",
                     "label": "Unique Processes"
                   }
-                ],
-                "showExportToExcel": true
-              }
+                ]
+              },
+              "sortBy": []
             },
             "conditionalVisibility": {
               "parameterName": "SelectedVendor",
@@ -1573,14 +1509,8 @@
                     }
                   }
                 ],
-                "filter": true,
-                "sortBy": [
-                  {
-                    "itemKey": "EventCount",
-                    "sortOrder": 2
-                  }
-                ],
                 "rowLimit": 100,
+                "filter": true,
                 "labelSettings": [
                   {
                     "columnId": "InitiatingProcessVersionInfoCompanyName",
@@ -1606,10 +1536,9 @@
                     "columnId": "UniqueAccounts",
                     "label": "Unique Accounts"
                   }
-                ],
-                "exportAllFields": true,
-                "showExportToExcel": true
-              }
+                ]
+              },
+              "sortBy": []
             },
             "name": "selector-Sixth"
           },
@@ -1634,6 +1563,7 @@
               "size": 1,
               "title": "Process Detail — {SelectedVendor} (DeviceProcessEvents)",
               "timeContextFromParameter": "TimePicker",
+              "showExportToExcel": true,
               "queryType": 0,
               "resourceType": "microsoft.operationalinsights/workspaces",
               "visualization": "table",
@@ -1657,14 +1587,6 @@
                   }
                 ],
                 "filter": true,
-                "sortBy": [
-                  {
-                    "itemKey": "EventCount",
-                    "sortOrder": 2
-                  }
-                ],
-                "rowLimit": 250,
-                "exportAllFields": true,
                 "labelSettings": [
                   {
                     "columnId": "InitiatingProcessVersionInfoCompanyName",
@@ -1710,9 +1632,9 @@
                     "columnId": "UniqueCommandLines",
                     "label": "Unique Cmd Lines"
                   }
-                ],
-                "showExportToExcel": true
-              }
+                ]
+              },
+              "sortBy": []
             },
             "conditionalVisibility": {
               "parameterName": "SelectedVendor",
@@ -1729,6 +1651,7 @@
               "size": 1,
               "title": "Spawned Process Detail — {SelectedVendor} (DeviceProcessEvents)",
               "timeContextFromParameter": "TimePicker",
+              "showExportToExcel": true,
               "queryType": 0,
               "resourceType": "microsoft.operationalinsights/workspaces",
               "visualization": "table",
@@ -1744,13 +1667,6 @@
                   }
                 ],
                 "filter": true,
-                "sortBy": [
-                  {
-                    "itemKey": "EventCount",
-                    "sortOrder": 2
-                  }
-                ],
-                "exportAllFields": true,
                 "labelSettings": [
                   {
                     "columnId": "FileName",
@@ -1780,9 +1696,9 @@
                     "columnId": "UniqueDevices",
                     "label": "Unique Devices"
                   }
-                ],
-                "showExportToExcel": true
-              }
+                ]
+              },
+              "sortBy": []
             },
             "conditionalVisibility": {
               "parameterName": "SelectedVendor",
@@ -1814,13 +1730,6 @@
                   }
                 ],
                 "filter": true,
-                "sortBy": [
-                  {
-                    "itemKey": "EventCount",
-                    "sortOrder": 2
-                  }
-                ],
-                "exportAllFields": true,
                 "labelSettings": [
                   {
                     "columnId": "ActionType",
@@ -1834,9 +1743,9 @@
                     "columnId": "UniqueDevices",
                     "label": "Unique Devices"
                   }
-                ],
-                "showExportToExcel": true
-              }
+                ]
+              },
+              "sortBy": []
             },
             "conditionalVisibility": {
               "parameterName": "SelectedVendor",
@@ -1868,13 +1777,6 @@
                   }
                 ],
                 "filter": true,
-                "sortBy": [
-                  {
-                    "itemKey": "EventCount",
-                    "sortOrder": 2
-                  }
-                ],
-                "exportAllFields": true,
                 "labelSettings": [
                   {
                     "columnId": "DeviceName",
@@ -1888,9 +1790,9 @@
                     "columnId": "UniqueProcesses",
                     "label": "Unique Processes"
                   }
-                ],
-                "showExportToExcel": true
-              }
+                ]
+              },
+              "sortBy": []
             },
             "conditionalVisibility": {
               "parameterName": "SelectedVendor",
@@ -1990,14 +1892,8 @@
                     }
                   }
                 ],
-                "filter": true,
-                "sortBy": [
-                  {
-                    "itemKey": "EventCount",
-                    "sortOrder": 2
-                  }
-                ],
                 "rowLimit": 100,
+                "filter": true,
                 "labelSettings": [
                   {
                     "columnId": "InitiatingProcessVersionInfoCompanyName",
@@ -2019,10 +1915,9 @@
                     "columnId": "UniqueRegValues",
                     "label": "Unique Registry Values"
                   }
-                ],
-                "exportAllFields": true,
-                "showExportToExcel": true
-              }
+                ]
+              },
+              "sortBy": []
             },
             "name": "selector-Seventh"
           },
@@ -2047,6 +1942,7 @@
               "size": 1,
               "title": "Process Detail — {SelectedVendor} (DeviceRegistryEvents)",
               "timeContextFromParameter": "TimePicker",
+              "showExportToExcel": true,
               "queryType": 0,
               "resourceType": "microsoft.operationalinsights/workspaces",
               "visualization": "table",
@@ -2070,14 +1966,6 @@
                   }
                 ],
                 "filter": true,
-                "sortBy": [
-                  {
-                    "itemKey": "EventCount",
-                    "sortOrder": 2
-                  }
-                ],
-                "rowLimit": 250,
-                "exportAllFields": true,
                 "labelSettings": [
                   {
                     "columnId": "InitiatingProcessVersionInfoCompanyName",
@@ -2119,9 +2007,9 @@
                     "columnId": "UniqueRegKeys",
                     "label": "Unique Registry Keys"
                   }
-                ],
-                "showExportToExcel": true
-              }
+                ]
+              },
+              "sortBy": []
             },
             "conditionalVisibility": {
               "parameterName": "SelectedVendor",
@@ -2153,13 +2041,6 @@
                   }
                 ],
                 "filter": true,
-                "sortBy": [
-                  {
-                    "itemKey": "EventCount",
-                    "sortOrder": 2
-                  }
-                ],
-                "exportAllFields": true,
                 "labelSettings": [
                   {
                     "columnId": "RegistryKey",
@@ -2185,9 +2066,9 @@
                     "columnId": "UniqueDevices",
                     "label": "Unique Devices"
                   }
-                ],
-                "showExportToExcel": true
-              }
+                ]
+              },
+              "sortBy": []
             },
             "conditionalVisibility": {
               "parameterName": "SelectedVendor",
@@ -2219,13 +2100,6 @@
                   }
                 ],
                 "filter": true,
-                "sortBy": [
-                  {
-                    "itemKey": "EventCount",
-                    "sortOrder": 2
-                  }
-                ],
-                "exportAllFields": true,
                 "labelSettings": [
                   {
                     "columnId": "DeviceName",
@@ -2239,9 +2113,9 @@
                     "columnId": "UniqueProcesses",
                     "label": "Unique Processes"
                   }
-                ],
-                "showExportToExcel": true
-              }
+                ]
+              },
+              "sortBy": []
             },
             "conditionalVisibility": {
               "parameterName": "SelectedVendor",
@@ -2341,14 +2215,8 @@
                     }
                   }
                 ],
-                "filter": true,
-                "sortBy": [
-                  {
-                    "itemKey": "EventCount",
-                    "sortOrder": 2
-                  }
-                ],
                 "rowLimit": 100,
+                "filter": true,
                 "labelSettings": [
                   {
                     "columnId": "InitiatingProcessVersionInfoCompanyName",
@@ -2370,10 +2238,9 @@
                     "columnId": "TotalFileSize_MB",
                     "label": "Total File Size (MB)"
                   }
-                ],
-                "exportAllFields": true,
-                "showExportToExcel": true
-              }
+                ]
+              },
+              "sortBy": []
             },
             "name": "selector-Eighth"
           },
@@ -2398,6 +2265,7 @@
               "size": 1,
               "title": "Process Detail — {SelectedVendor} (DeviceImageLoadEvents)",
               "timeContextFromParameter": "TimePicker",
+              "showExportToExcel": true,
               "queryType": 0,
               "resourceType": "microsoft.operationalinsights/workspaces",
               "visualization": "table",
@@ -2421,14 +2289,6 @@
                   }
                 ],
                 "filter": true,
-                "sortBy": [
-                  {
-                    "itemKey": "EventCount",
-                    "sortOrder": 2
-                  }
-                ],
-                "rowLimit": 250,
-                "exportAllFields": true,
                 "labelSettings": [
                   {
                     "columnId": "InitiatingProcessVersionInfoCompanyName",
@@ -2478,9 +2338,9 @@
                     "columnId": "TotalFileSize_MB",
                     "label": "Total File Size (MB)"
                   }
-                ],
-                "showExportToExcel": true
-              }
+                ]
+              },
+              "sortBy": []
             },
             "conditionalVisibility": {
               "parameterName": "SelectedVendor",
@@ -2512,13 +2372,6 @@
                   }
                 ],
                 "filter": true,
-                "sortBy": [
-                  {
-                    "itemKey": "EventCount",
-                    "sortOrder": 2
-                  }
-                ],
-                "exportAllFields": true,
                 "labelSettings": [
                   {
                     "columnId": "FileName",
@@ -2548,9 +2401,9 @@
                     "columnId": "FileSize_KB",
                     "label": "Avg File Size (KB)"
                   }
-                ],
-                "showExportToExcel": true
-              }
+                ]
+              },
+              "sortBy": []
             },
             "conditionalVisibility": {
               "parameterName": "SelectedVendor",
@@ -2582,13 +2435,6 @@
                   }
                 ],
                 "filter": true,
-                "sortBy": [
-                  {
-                    "itemKey": "EventCount",
-                    "sortOrder": 2
-                  }
-                ],
-                "exportAllFields": true,
                 "labelSettings": [
                   {
                     "columnId": "DeviceName",
@@ -2602,9 +2448,9 @@
                     "columnId": "UniqueProcesses",
                     "label": "Unique Processes"
                   }
-                ],
-                "showExportToExcel": true
-              }
+                ]
+              },
+              "sortBy": []
             },
             "conditionalVisibility": {
               "parameterName": "SelectedVendor",
@@ -2704,14 +2550,8 @@
                     }
                   }
                 ],
-                "filter": true,
-                "sortBy": [
-                  {
-                    "itemKey": "EventCount",
-                    "sortOrder": 2
-                  }
-                ],
                 "rowLimit": 100,
+                "filter": true,
                 "labelSettings": [
                   {
                     "columnId": "InitiatingProcessVersionInfoCompanyName",
@@ -2733,10 +2573,9 @@
                     "columnId": "UniqueProcesses",
                     "label": "Unique Processes"
                   }
-                ],
-                "exportAllFields": true,
-                "showExportToExcel": true
-              }
+                ]
+              },
+              "sortBy": []
             },
             "name": "selector-Ninth"
           },
@@ -2761,6 +2600,7 @@
               "size": 1,
               "title": "Process Detail — {SelectedVendor} (DeviceEvents)",
               "timeContextFromParameter": "TimePicker",
+              "showExportToExcel": true,
               "queryType": 0,
               "resourceType": "microsoft.operationalinsights/workspaces",
               "visualization": "table",
@@ -2784,14 +2624,6 @@
                   }
                 ],
                 "filter": true,
-                "sortBy": [
-                  {
-                    "itemKey": "EventCount",
-                    "sortOrder": 2
-                  }
-                ],
-                "rowLimit": 250,
-                "exportAllFields": true,
                 "labelSettings": [
                   {
                     "columnId": "InitiatingProcessVersionInfoCompanyName",
@@ -2833,9 +2665,9 @@
                     "columnId": "UniqueActionTypes",
                     "label": "Unique Action Types"
                   }
-                ],
-                "showExportToExcel": true
-              }
+                ]
+              },
+              "sortBy": []
             },
             "conditionalVisibility": {
               "parameterName": "SelectedVendor",
@@ -2867,13 +2699,6 @@
                   }
                 ],
                 "filter": true,
-                "sortBy": [
-                  {
-                    "itemKey": "EventCount",
-                    "sortOrder": 2
-                  }
-                ],
-                "exportAllFields": true,
                 "labelSettings": [
                   {
                     "columnId": "ActionType",
@@ -2891,9 +2716,9 @@
                     "columnId": "UniqueProcesses",
                     "label": "Unique Processes"
                   }
-                ],
-                "showExportToExcel": true
-              }
+                ]
+              },
+              "sortBy": []
             },
             "conditionalVisibility": {
               "parameterName": "SelectedVendor",
@@ -2925,13 +2750,6 @@
                   }
                 ],
                 "filter": true,
-                "sortBy": [
-                  {
-                    "itemKey": "EventCount",
-                    "sortOrder": 2
-                  }
-                ],
-                "exportAllFields": true,
                 "labelSettings": [
                   {
                     "columnId": "DeviceName",
@@ -2945,9 +2763,9 @@
                     "columnId": "UniqueProcesses",
                     "label": "Unique Processes"
                   }
-                ],
-                "showExportToExcel": true
-              }
+                ]
+              },
+              "sortBy": []
             },
             "conditionalVisibility": {
               "parameterName": "SelectedVendor",
@@ -2986,7 +2804,7 @@
     }
   ],
   "fallbackResourceIds": [
-    "/subscriptions/059a6208-97b5-48d7-ad37-4005e57ff26c/resourcegroups/daf-sentinel-prod/providers/microsoft.operationalinsights/workspaces/milz-operations-prod-log"
+    "/subscriptions/882d9ca8-f61e-4cc8-a081-dc01aab06b8a/resourcegroups/soc-central/providers/microsoft.operationalinsights/workspaces/soc-central"
   ],
   "fromTemplateId": "sentinel-UserWorkbook",
   "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
