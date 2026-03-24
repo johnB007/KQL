@@ -40,9 +40,6 @@ This workbook gives sysadmin and security teams fast triage coverage for replica
 ### DFS Replication Tab
 <img width="1859" height="717" alt="image" src="https://github.com/user-attachments/assets/59d95958-d088-4819-8c99-7192b96e9147" />
 
-### File Replication (NTFRS) Tab
-![NTFRS Tab - Placeholder 1](https://placehold.co/1600x900?text=NTFRS+Tab+Screenshot+1)
-![NTFRS Tab - Placeholder 2](https://placehold.co/1600x900?text=NTFRS+Tab+Screenshot+2)
 
 ### Directory Service Tab
 <img width="1861" height="696" alt="image" src="https://github.com/user-attachments/assets/ffde1782-9da2-435e-a2d3-02c388a15da5" />
