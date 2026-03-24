@@ -142,17 +142,3 @@ When the deployment blade opens, provide:
 1. Save changes in this folder.
 2. Commit and push to your repository.
 3. Open this folder in GitHub to verify README rendering.
-
-Example commands:
-
-```powershell
-cd C:\Users\jobarbar\Defender_XDR
-git add Dashboards/SYSVOL-DC-Replication-Monitor/README.md
-git commit -m "Add full README page with section details and screenshot placeholders"
-git push
-```
-
-## Replace Placeholder Screenshots Later
-- Upload your real screenshots to GitHub issue attachments or repo assets.
-- Replace each placeholder image URL in this README with your final screenshot URL.
-- Keep the same headings so the page layout stays clean and consistent.
