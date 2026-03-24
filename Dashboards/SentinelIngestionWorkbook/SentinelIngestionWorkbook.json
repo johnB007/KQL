@@ -304,7 +304,8 @@
                   }
                 ],
                 "exportAllFields": true,
-                "rowLimit": 200
+                "rowLimit": 200,
+                "showExportToExcel": true
               }
             },
             "name": "table-First-summary"
@@ -370,7 +371,8 @@
                     "sortOrder": 2
                   }
                 ],
-                "exportAllFields": true
+                "exportAllFields": true,
+                "showExportToExcel": true
               }
             },
             "conditionalVisibility": {
@@ -503,7 +505,8 @@
                   }
                 ],
                 "exportAllFields": true,
-                "rowLimit": 200
+                "rowLimit": 200,
+                "showExportToExcel": true
               }
             },
             "name": "table-Second-summary"
@@ -569,7 +572,8 @@
                     "sortOrder": 2
                   }
                 ],
-                "exportAllFields": true
+                "exportAllFields": true,
+                "showExportToExcel": true
               }
             },
             "conditionalVisibility": {
@@ -702,7 +706,8 @@
                   }
                 ],
                 "exportAllFields": true,
-                "rowLimit": 200
+                "rowLimit": 200,
+                "showExportToExcel": true
               }
             },
             "name": "table-Fifth-summary"
@@ -768,7 +773,8 @@
                     "sortOrder": 2
                   }
                 ],
-                "exportAllFields": true
+                "exportAllFields": true,
+                "showExportToExcel": true
               }
             },
             "conditionalVisibility": {
@@ -879,7 +885,8 @@
                     "label": "Total File Size (MB)"
                   }
                 ],
-                "exportAllFields": true
+                "exportAllFields": true,
+                "showExportToExcel": true
               }
             },
             "name": "selector-Third"
@@ -989,7 +996,8 @@
                     "columnId": "UniqueTargetPaths",
                     "label": "Unique Target Paths"
                   }
-                ]
+                ],
+                "showExportToExcel": true
               }
             },
             "conditionalVisibility": {
@@ -1046,7 +1054,8 @@
                     "columnId": "UniqueFiles",
                     "label": "Unique Files"
                   }
-                ]
+                ],
+                "showExportToExcel": true
               }
             },
             "conditionalVisibility": {
@@ -1099,7 +1108,8 @@
                     "columnId": "UniqueProcesses",
                     "label": "Unique Processes"
                   }
-                ]
+                ],
+                "showExportToExcel": true
               }
             },
             "conditionalVisibility": {
@@ -1234,7 +1244,8 @@
                     "label": "Unique Ports"
                   }
                 ],
-                "exportAllFields": true
+                "exportAllFields": true,
+                "showExportToExcel": true
               }
             },
             "name": "selector-Fourth"
@@ -1336,7 +1347,8 @@
                     "columnId": "UniqueRemoteUrls",
                     "label": "Unique Remote URLs"
                   }
-                ]
+                ],
+                "showExportToExcel": true
               }
             },
             "conditionalVisibility": {
@@ -1405,7 +1417,8 @@
                     "columnId": "UniqueDevices",
                     "label": "Unique Devices"
                   }
-                ]
+                ],
+                "showExportToExcel": true
               }
             },
             "conditionalVisibility": {
@@ -1458,7 +1471,8 @@
                     "columnId": "UniqueProcesses",
                     "label": "Unique Processes"
                   }
-                ]
+                ],
+                "showExportToExcel": true
               }
             },
             "conditionalVisibility": {
@@ -1593,7 +1607,8 @@
                     "label": "Unique Accounts"
                   }
                 ],
-                "exportAllFields": true
+                "exportAllFields": true,
+                "showExportToExcel": true
               }
             },
             "name": "selector-Sixth"
@@ -1695,7 +1710,8 @@
                     "columnId": "UniqueCommandLines",
                     "label": "Unique Cmd Lines"
                   }
-                ]
+                ],
+                "showExportToExcel": true
               }
             },
             "conditionalVisibility": {
@@ -1764,7 +1780,8 @@
                     "columnId": "UniqueDevices",
                     "label": "Unique Devices"
                   }
-                ]
+                ],
+                "showExportToExcel": true
               }
             },
             "conditionalVisibility": {
@@ -1817,7 +1834,8 @@
                     "columnId": "UniqueDevices",
                     "label": "Unique Devices"
                   }
-                ]
+                ],
+                "showExportToExcel": true
               }
             },
             "conditionalVisibility": {
@@ -1870,7 +1888,8 @@
                     "columnId": "UniqueProcesses",
                     "label": "Unique Processes"
                   }
-                ]
+                ],
+                "showExportToExcel": true
               }
             },
             "conditionalVisibility": {
@@ -2001,7 +2020,8 @@
                     "label": "Unique Registry Values"
                   }
                 ],
-                "exportAllFields": true
+                "exportAllFields": true,
+                "showExportToExcel": true
               }
             },
             "name": "selector-Seventh"
@@ -2099,7 +2119,8 @@
                     "columnId": "UniqueRegKeys",
                     "label": "Unique Registry Keys"
                   }
-                ]
+                ],
+                "showExportToExcel": true
               }
             },
             "conditionalVisibility": {
@@ -2164,7 +2185,8 @@
                     "columnId": "UniqueDevices",
                     "label": "Unique Devices"
                   }
-                ]
+                ],
+                "showExportToExcel": true
               }
             },
             "conditionalVisibility": {
@@ -2217,7 +2239,8 @@
                     "columnId": "UniqueProcesses",
                     "label": "Unique Processes"
                   }
-                ]
+                ],
+                "showExportToExcel": true
               }
             },
             "conditionalVisibility": {
@@ -2348,7 +2371,8 @@
                     "label": "Total File Size (MB)"
                   }
                 ],
-                "exportAllFields": true
+                "exportAllFields": true,
+                "showExportToExcel": true
               }
             },
             "name": "selector-Eighth"
@@ -2454,7 +2478,8 @@
                     "columnId": "TotalFileSize_MB",
                     "label": "Total File Size (MB)"
                   }
-                ]
+                ],
+                "showExportToExcel": true
               }
             },
             "conditionalVisibility": {
@@ -2523,7 +2548,8 @@
                     "columnId": "FileSize_KB",
                     "label": "Avg File Size (KB)"
                   }
-                ]
+                ],
+                "showExportToExcel": true
               }
             },
             "conditionalVisibility": {
@@ -2576,7 +2602,8 @@
                     "columnId": "UniqueProcesses",
                     "label": "Unique Processes"
                   }
-                ]
+                ],
+                "showExportToExcel": true
               }
             },
             "conditionalVisibility": {
@@ -2707,7 +2734,8 @@
                     "label": "Unique Processes"
                   }
                 ],
-                "exportAllFields": true
+                "exportAllFields": true,
+                "showExportToExcel": true
               }
             },
             "name": "selector-Ninth"
@@ -2805,7 +2833,8 @@
                     "columnId": "UniqueActionTypes",
                     "label": "Unique Action Types"
                   }
-                ]
+                ],
+                "showExportToExcel": true
               }
             },
             "conditionalVisibility": {
@@ -2862,7 +2891,8 @@
                     "columnId": "UniqueProcesses",
                     "label": "Unique Processes"
                   }
-                ]
+                ],
+                "showExportToExcel": true
               }
             },
             "conditionalVisibility": {
@@ -2915,7 +2945,8 @@
                     "columnId": "UniqueProcesses",
                     "label": "Unique Processes"
                   }
-                ]
+                ],
+                "showExportToExcel": true
               }
             },
             "conditionalVisibility": {
