@@ -57,18 +57,34 @@
             "version": "KqlParameterItem/1.0",
             "name": "SelectedDataType",
             "label": "Selected Data Type",
-            "type": 1,
+            "type": 2,
             "isRequired": false,
-            "value": ""
+            "query": "Usage\n| where IsBillable == true\n| summarize by DataType\n| order by DataType asc",
+            "queryType": 0,
+            "resourceType": "microsoft.operationalinsights/workspaces",
+            "timeContextFromParameter": "TimePicker",
+            "typeSettings": {
+              "additionalResourceOptions": [],
+              "showDefault": false,
+              "noItemsMessage": "No data types found in selected time range"
+            }
           },
           {
             "id": "a1b2c3d4-0002-0002-0002-000000000002",
             "version": "KqlParameterItem/1.0",
             "name": "SelectedVendor",
             "label": "Selected Vendor",
-            "type": 1,
+            "type": 2,
             "isRequired": false,
-            "value": ""
+            "query": "union DeviceFileEvents, DeviceNetworkEvents, DeviceProcessEvents,\n      DeviceRegistryEvents, DeviceImageLoadEvents, DeviceEvents\n| where InitiatingProcessVersionInfoCompanyName !startswith 'Microsoft'\n    and InitiatingProcessVersionInfoCompanyName !startswith 'Google'\n    and isnotempty(InitiatingProcessVersionInfoCompanyName)\n| summarize by InitiatingProcessVersionInfoCompanyName\n| order by InitiatingProcessVersionInfoCompanyName asc",
+            "queryType": 0,
+            "resourceType": "microsoft.operationalinsights/workspaces",
+            "timeContextFromParameter": "TimePicker",
+            "typeSettings": {
+              "additionalResourceOptions": [],
+              "showDefault": false,
+              "noItemsMessage": "No third-party vendors found in selected time range"
+            }
           }
         ],
         "style": "pills",
@@ -80,7 +96,7 @@
     {
       "type": 1,
       "content": {
-        "json": "This workbook gives an overall picture of the current Sentinel Ingestion broken down in size of ingestion per day by the Time Range you choose (7,14,30,60,90 days or custom time frame)\r\n\r\nAdditionally, you can drill down into Device related categories to see the counts coming from specific vendor processes. Since the vast majority are either Microsoft, Google, or blank (no vendor) we focus on the remaining vendors.\r\n\r\nFor questions please contact Keith Abluton(keithab@microsoft.com)",
+        "json": "Select a tab above to explore ingestion volumes by data type. Click any row in a summary table to see daily trends and export data using the **⬇ Download** icon that appears in the table header.",
         "style": "upsell"
       },
       "conditionalVisibility": {
@@ -179,7 +195,7 @@
       "content": {
         "version": "NotebookGroup/1.0",
         "groupType": "editable",
-        "title": "Sentinel Ingestion — CISO Overview",
+        "title": "Sentinel Ingestion",
         "items": [
           {
             "type": 3,
@@ -197,7 +213,7 @@
           {
             "type": 1,
             "content": {
-              "json": "### Sentinel Ingestion — CISO Overview\nClick a **DataType** row to see daily trend below.",
+              "json": "### Sentinel Ingestion\nClick a **DataType** row to see daily trend below.",
               "style": "info"
             },
             "name": "hint-First-table"
@@ -206,7 +222,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "let TotalGB = toscalar(Usage\n| where IsBillable==true\n| summarize sum(Quantity)/1024);\nUsage\n| where IsBillable==true\n| summarize Total_GB=round(sum(Quantity)/1024,2), Daily_Avg_GB=round(avg(Quantity)/1024,2), Peak_Day_GB=round(max(Quantity)/1024,2), Days_Active=dcount(bin(TimeGenerated,1d)) by DataType\n| extend Pct_of_Total=round(Total_GB / TotalGB * 100, 1)\n| project DataType, Total_GB, Pct_of_Total, Daily_Avg_GB, Peak_Day_GB, Days_Active\n| order by Total_GB desc",
+              "query": "let TotalGB = toscalar(Usage\n| where IsBillable==true\n| summarize sum(Quantity)/1024);\nUsage\n| where IsBillable==true\n| summarize Total_GB=round(sum(Quantity)/1024,2), Daily_Avg_GB=round(avg(Quantity)/1024,2), Peak_Day_GB=round(max(Quantity)/1024,2), Days_Active=dcount(bin(TimeGenerated,1d)) by DataType\n| extend Pct_of_Total=round(Total_GB / TotalGB * 100, 1)\n| extend Monthly_Proj_GB=round(Daily_Avg_GB * 30, 2)\n| extend Last_Active=max_of(TimeGenerated)\n| project DataType, Total_GB, Pct_of_Total, Daily_Avg_GB, Monthly_Proj_GB, Peak_Day_GB, Days_Active\n| order by Total_GB desc",
               "size": 1,
               "title": "Data Types — Ranked by Total GB",
               "timeContextFromParameter": "TimePicker",
@@ -238,6 +254,14 @@
                     "formatter": 4,
                     "formatOptions": {
                       "palette": "magenta",
+                      "showBorder": false
+                    }
+                  },
+                  {
+                    "columnMatch": "Monthly_Proj_GB",
+                    "formatter": 4,
+                    "formatOptions": {
+                      "palette": "yellow",
                       "showBorder": false
                     }
                   }
@@ -273,8 +297,14 @@
                   {
                     "columnId": "Days_Active",
                     "label": "Days Active"
+                  },
+                  {
+                    "columnId": "Monthly_Proj_GB",
+                    "label": "30-Day Projection (GB)"
                   }
-                ]
+                ],
+                "exportAllFields": true,
+                "rowLimit": 200
               }
             },
             "name": "table-First-summary"
@@ -364,7 +394,7 @@
       "content": {
         "version": "NotebookGroup/1.0",
         "groupType": "editable",
-        "title": "Device Tables Breakout — CISO Overview",
+        "title": "Device Tables Breakout",
         "items": [
           {
             "type": 3,
@@ -382,7 +412,7 @@
           {
             "type": 1,
             "content": {
-              "json": "### Device Tables Breakout — CISO Overview\nClick a **DataType** row to see daily trend below.",
+              "json": "### Device Tables Breakout\nClick a **DataType** row to see daily trend below.",
               "style": "info"
             },
             "name": "hint-Second-table"
@@ -391,7 +421,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "let TotalDeviceGB = toscalar(Usage\n| where DataType in ('DeviceEvents','DeviceFileEvents','DeviceNetworkEvents','DeviceProcessEvents','DeviceImageLoadEvents','DeviceLogonEvents','DeviceNetworkInfo','DeviceRegistryEvents')\n| summarize sum(Quantity)/1024);\nUsage\n| where DataType in ('DeviceEvents','DeviceFileEvents','DeviceNetworkEvents','DeviceProcessEvents','DeviceImageLoadEvents','DeviceLogonEvents','DeviceNetworkInfo','DeviceRegistryEvents')\n| summarize Total_GB=round(sum(Quantity)/1024,2), Daily_Avg_GB=round(avg(Quantity)/1024,2), Peak_Day_GB=round(max(Quantity)/1024,2), Days_Active=dcount(bin(TimeGenerated,1d)) by DataType\n| extend Pct_of_Device_Total=round(Total_GB / TotalDeviceGB * 100, 1)\n| project DataType, Total_GB, Pct_of_Device_Total, Daily_Avg_GB, Peak_Day_GB, Days_Active\n| order by Total_GB desc",
+              "query": "let TotalDeviceGB = toscalar(Usage\n| where DataType in ('DeviceEvents','DeviceFileEvents','DeviceNetworkEvents','DeviceProcessEvents','DeviceImageLoadEvents','DeviceLogonEvents','DeviceNetworkInfo','DeviceRegistryEvents')\n| summarize sum(Quantity)/1024);\nUsage\n| where DataType in ('DeviceEvents','DeviceFileEvents','DeviceNetworkEvents','DeviceProcessEvents','DeviceImageLoadEvents','DeviceLogonEvents','DeviceNetworkInfo','DeviceRegistryEvents')\n| summarize Total_GB=round(sum(Quantity)/1024,2), Daily_Avg_GB=round(avg(Quantity)/1024,2), Peak_Day_GB=round(max(Quantity)/1024,2), Days_Active=dcount(bin(TimeGenerated,1d)) by DataType\n| extend Pct_of_Device_Total=round(Total_GB / TotalDeviceGB * 100, 1)\n| extend Monthly_Proj_GB=round(Daily_Avg_GB * 30, 2)\n| project DataType, Total_GB, Pct_of_Device_Total, Daily_Avg_GB, Monthly_Proj_GB, Peak_Day_GB, Days_Active\n| order by Total_GB desc",
               "size": 1,
               "title": "Data Types — Ranked by Total GB",
               "timeContextFromParameter": "TimePicker",
@@ -423,6 +453,14 @@
                     "formatter": 4,
                     "formatOptions": {
                       "palette": "magenta",
+                      "showBorder": false
+                    }
+                  },
+                  {
+                    "columnMatch": "Monthly_Proj_GB",
+                    "formatter": 4,
+                    "formatOptions": {
+                      "palette": "yellow",
                       "showBorder": false
                     }
                   }
@@ -458,8 +496,14 @@
                   {
                     "columnId": "Days_Active",
                     "label": "Days Active"
+                  },
+                  {
+                    "columnId": "Monthly_Proj_GB",
+                    "label": "30-Day Projection (GB)"
                   }
-                ]
+                ],
+                "exportAllFields": true,
+                "rowLimit": 200
               }
             },
             "name": "table-Second-summary"
@@ -549,7 +593,7 @@
       "content": {
         "version": "NotebookGroup/1.0",
         "groupType": "editable",
-        "title": "Non-Device Ingestion — CISO Overview",
+        "title": "Non-Device Ingestion",
         "items": [
           {
             "type": 3,
@@ -567,7 +611,7 @@
           {
             "type": 1,
             "content": {
-              "json": "### Non-Device Ingestion — CISO Overview\nClick a **DataType** row to see daily trend below.",
+              "json": "### Non-Device Ingestion\nClick a **DataType** row to see daily trend below.",
               "style": "info"
             },
             "name": "hint-Fifth-table"
@@ -576,7 +620,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "let TotalNonDeviceGB = toscalar(Usage\n| where IsBillable==true\n| where DataType !startswith 'Device'\n| summarize sum(Quantity)/1024);\nUsage\n| where IsBillable==true\n| where DataType !startswith 'Device'\n| summarize Total_GB=round(sum(Quantity)/1024,2), Daily_Avg_GB=round(avg(Quantity)/1024,2), Peak_Day_GB=round(max(Quantity)/1024,2), Days_Active=dcount(bin(TimeGenerated,1d)) by DataType\n| extend Pct_of_NonDevice_Total=round(Total_GB / TotalNonDeviceGB * 100, 1)\n| project DataType, Total_GB, Pct_of_NonDevice_Total, Daily_Avg_GB, Peak_Day_GB, Days_Active\n| order by Total_GB desc",
+              "query": "let TotalNonDeviceGB = toscalar(Usage\n| where IsBillable==true\n| where DataType !startswith 'Device'\n| summarize sum(Quantity)/1024);\nUsage\n| where IsBillable==true\n| where DataType !startswith 'Device'\n| summarize Total_GB=round(sum(Quantity)/1024,2), Daily_Avg_GB=round(avg(Quantity)/1024,2), Peak_Day_GB=round(max(Quantity)/1024,2), Days_Active=dcount(bin(TimeGenerated,1d)) by DataType\n| extend Pct_of_NonDevice_Total=round(Total_GB / TotalNonDeviceGB * 100, 1)\n| extend Monthly_Proj_GB=round(Daily_Avg_GB * 30, 2)\n| project DataType, Total_GB, Pct_of_NonDevice_Total, Daily_Avg_GB, Monthly_Proj_GB, Peak_Day_GB, Days_Active\n| order by Total_GB desc",
               "size": 1,
               "title": "Data Types — Ranked by Total GB",
               "timeContextFromParameter": "TimePicker",
@@ -608,6 +652,14 @@
                     "formatter": 4,
                     "formatOptions": {
                       "palette": "magenta",
+                      "showBorder": false
+                    }
+                  },
+                  {
+                    "columnMatch": "Monthly_Proj_GB",
+                    "formatter": 4,
+                    "formatOptions": {
+                      "palette": "yellow",
                       "showBorder": false
                     }
                   }
@@ -643,8 +695,14 @@
                   {
                     "columnId": "Days_Active",
                     "label": "Days Active"
+                  },
+                  {
+                    "columnId": "Monthly_Proj_GB",
+                    "label": "30-Day Projection (GB)"
                   }
-                ]
+                ],
+                "exportAllFields": true,
+                "rowLimit": 200
               }
             },
             "name": "table-Fifth-summary"
@@ -752,6 +810,14 @@
             "name": "chart-dfe"
           },
           {
+            "type": 1,
+            "content": {
+              "json": "#### 🔧 Transform Quick Reference — Filtering Fields for Ingestion Transforms\nUse these three fields from the drilldown tables below to build workspace transforms that drop noisy events:\n\n| # | Field | Scope | Example KQL Filter |\n|---|-------|-------|--------------------|\n| 1 | **InitiatingProcessFolderPath** | Drops all events from a specific installed application path | `where InitiatingProcessFolderPath !contains \"C:\\\\Program Files\\\\NoisyApp\"` |\n| 2 | **InitiatingProcessFileName** | More targeted — drops events from a specific executable regardless of install location | `where InitiatingProcessFileName != \"noisyagent.exe\"` |\n| 3 | **InitiatingProcessVersionInfoCompanyName** | Broadest — drops everything from an entire vendor | `where InitiatingProcessVersionInfoCompanyName != \"Noisy Vendor Inc.\"` |\n\n> **Tip:** Click a vendor row, then use the *Process Detail* table to identify the exact values to plug into your transform.",
+              "style": "info"
+            },
+            "name": "transform-ref-Third"
+          },
+          {
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
@@ -812,7 +878,8 @@
                     "columnId": "TotalFileSize_MB",
                     "label": "Total File Size (MB)"
                   }
-                ]
+                ],
+                "exportAllFields": true
               }
             },
             "name": "selector-Third"
@@ -1094,6 +1161,14 @@
             "name": "chart-dne"
           },
           {
+            "type": 1,
+            "content": {
+              "json": "#### 🔧 Transform Quick Reference — Filtering Fields for Ingestion Transforms\nUse these three fields from the drilldown tables below to build workspace transforms that drop noisy events:\n\n| # | Field | Scope | Example KQL Filter |\n|---|-------|-------|--------------------|\n| 1 | **InitiatingProcessFolderPath** | Drops all events from a specific installed application path | `where InitiatingProcessFolderPath !contains \"C:\\\\Program Files\\\\NoisyApp\"` |\n| 2 | **InitiatingProcessFileName** | More targeted — drops events from a specific executable regardless of install location | `where InitiatingProcessFileName != \"noisyagent.exe\"` |\n| 3 | **InitiatingProcessVersionInfoCompanyName** | Broadest — drops everything from an entire vendor | `where InitiatingProcessVersionInfoCompanyName != \"Noisy Vendor Inc.\"` |\n\n> **Tip:** Click a vendor row, then use the *Process Detail* table to identify the exact values to plug into your transform.",
+              "style": "info"
+            },
+            "name": "transform-ref-Fourth"
+          },
+          {
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
@@ -1158,7 +1233,8 @@
                     "columnId": "UniquePorts",
                     "label": "Unique Ports"
                   }
-                ]
+                ],
+                "exportAllFields": true
               }
             },
             "name": "selector-Fourth"
@@ -1444,6 +1520,14 @@
             "name": "chart-dpe"
           },
           {
+            "type": 1,
+            "content": {
+              "json": "#### 🔧 Transform Quick Reference — Filtering Fields for Ingestion Transforms\nUse these three fields from the drilldown tables below to build workspace transforms that drop noisy events:\n\n| # | Field | Scope | Example KQL Filter |\n|---|-------|-------|--------------------|\n| 1 | **InitiatingProcessFolderPath** | Drops all events from a specific installed application path | `where InitiatingProcessFolderPath !contains \"C:\\\\Program Files\\\\NoisyApp\"` |\n| 2 | **InitiatingProcessFileName** | More targeted — drops events from a specific executable regardless of install location | `where InitiatingProcessFileName != \"noisyagent.exe\"` |\n| 3 | **InitiatingProcessVersionInfoCompanyName** | Broadest — drops everything from an entire vendor | `where InitiatingProcessVersionInfoCompanyName != \"Noisy Vendor Inc.\"` |\n\n> **Tip:** Click a vendor row, then use the *Process Detail* table to identify the exact values to plug into your transform.",
+              "style": "info"
+            },
+            "name": "transform-ref-Sixth"
+          },
+          {
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
@@ -1508,7 +1592,8 @@
                     "columnId": "UniqueAccounts",
                     "label": "Unique Accounts"
                   }
-                ]
+                ],
+                "exportAllFields": true
               }
             },
             "name": "selector-Sixth"
@@ -1847,6 +1932,14 @@
             "name": "chart-dre"
           },
           {
+            "type": 1,
+            "content": {
+              "json": "#### 🔧 Transform Quick Reference — Filtering Fields for Ingestion Transforms\nUse these three fields from the drilldown tables below to build workspace transforms that drop noisy events:\n\n| # | Field | Scope | Example KQL Filter |\n|---|-------|-------|--------------------|\n| 1 | **InitiatingProcessFolderPath** | Drops all events from a specific installed application path | `where InitiatingProcessFolderPath !contains \"C:\\\\Program Files\\\\NoisyApp\"` |\n| 2 | **InitiatingProcessFileName** | More targeted — drops events from a specific executable regardless of install location | `where InitiatingProcessFileName != \"noisyagent.exe\"` |\n| 3 | **InitiatingProcessVersionInfoCompanyName** | Broadest — drops everything from an entire vendor | `where InitiatingProcessVersionInfoCompanyName != \"Noisy Vendor Inc.\"` |\n\n> **Tip:** Click a vendor row, then use the *Process Detail* table to identify the exact values to plug into your transform.",
+              "style": "info"
+            },
+            "name": "transform-ref-Seventh"
+          },
+          {
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
@@ -1907,7 +2000,8 @@
                     "columnId": "UniqueRegValues",
                     "label": "Unique Registry Values"
                   }
-                ]
+                ],
+                "exportAllFields": true
               }
             },
             "name": "selector-Seventh"
@@ -2185,6 +2279,14 @@
             "name": "chart-dile"
           },
           {
+            "type": 1,
+            "content": {
+              "json": "#### 🔧 Transform Quick Reference — Filtering Fields for Ingestion Transforms\nUse these three fields from the drilldown tables below to build workspace transforms that drop noisy events:\n\n| # | Field | Scope | Example KQL Filter |\n|---|-------|-------|--------------------|\n| 1 | **InitiatingProcessFolderPath** | Drops all events from a specific installed application path | `where InitiatingProcessFolderPath !contains \"C:\\\\Program Files\\\\NoisyApp\"` |\n| 2 | **InitiatingProcessFileName** | More targeted — drops events from a specific executable regardless of install location | `where InitiatingProcessFileName != \"noisyagent.exe\"` |\n| 3 | **InitiatingProcessVersionInfoCompanyName** | Broadest — drops everything from an entire vendor | `where InitiatingProcessVersionInfoCompanyName != \"Noisy Vendor Inc.\"` |\n\n> **Tip:** Click a vendor row, then use the *Process Detail* table to identify the exact values to plug into your transform.",
+              "style": "info"
+            },
+            "name": "transform-ref-Eighth"
+          },
+          {
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
@@ -2245,7 +2347,8 @@
                     "columnId": "TotalFileSize_MB",
                     "label": "Total File Size (MB)"
                   }
-                ]
+                ],
+                "exportAllFields": true
               }
             },
             "name": "selector-Eighth"
@@ -2535,6 +2638,14 @@
             "name": "chart-de"
           },
           {
+            "type": 1,
+            "content": {
+              "json": "#### 🔧 Transform Quick Reference — Filtering Fields for Ingestion Transforms\nUse these three fields from the drilldown tables below to build workspace transforms that drop noisy events:\n\n| # | Field | Scope | Example KQL Filter |\n|---|-------|-------|--------------------|\n| 1 | **InitiatingProcessFolderPath** | Drops all events from a specific installed application path | `where InitiatingProcessFolderPath !contains \"C:\\\\Program Files\\\\NoisyApp\"` |\n| 2 | **InitiatingProcessFileName** | More targeted — drops events from a specific executable regardless of install location | `where InitiatingProcessFileName != \"noisyagent.exe\"` |\n| 3 | **InitiatingProcessVersionInfoCompanyName** | Broadest — drops everything from an entire vendor | `where InitiatingProcessVersionInfoCompanyName != \"Noisy Vendor Inc.\"` |\n\n> **Tip:** Click a vendor row, then use the *Process Detail* table to identify the exact values to plug into your transform.",
+              "style": "info"
+            },
+            "name": "transform-ref-Ninth"
+          },
+          {
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
@@ -2595,7 +2706,8 @@
                     "columnId": "UniqueProcesses",
                     "label": "Unique Processes"
                   }
-                ]
+                ],
+                "exportAllFields": true
               }
             },
             "name": "selector-Ninth"
