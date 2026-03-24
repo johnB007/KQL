@@ -206,7 +206,7 @@
               "timeContextFromParameter": "TimePicker",
               "queryType": 0,
               "resourceType": "microsoft.operationalinsights/workspaces",
-              "visualization": "barchart"
+              "visualization": "areachart"
             },
             "name": "chart-First"
           },
@@ -405,7 +405,7 @@
               "timeContextFromParameter": "TimePicker",
               "queryType": 0,
               "resourceType": "microsoft.operationalinsights/workspaces",
-              "visualization": "barchart"
+              "visualization": "areachart"
             },
             "name": "chart-Second"
           },
@@ -604,7 +604,7 @@
               "timeContextFromParameter": "TimePicker",
               "queryType": 0,
               "resourceType": "microsoft.operationalinsights/workspaces",
-              "visualization": "barchart"
+              "visualization": "areachart"
             },
             "name": "chart-Fifth"
           },
