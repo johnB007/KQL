@@ -19,7 +19,7 @@
             "id": "tab-overview",
             "cellValue": "Tab",
             "linkTarget": "parameter",
-            "linkLabel": "Oveerview",
+              "linkLabel": "Overview",
             "subTarget": "Overview",
             "style": "button"
           },
@@ -526,7 +526,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "DeviceInfo\n| where Timestamp {TimeRange}\n| summarize arg_max(Timestamp, DeviceType, OnboardingStatus) by DeviceId, DeviceName\n| where DeviceType in~ ('Camera','Webcam','AudioVideoEquipment','VideoSurveillance') or DeviceName has_any ('cam','cctv','nvr','dvr','ipcam','hikvision','dahua','axis','vivotek','pelco','bosch-cam','arlo','reolink','amcrest')\n| summarize TotalCameras=count(), Onboarded=countif(OnboardingStatus=~'Onboarded'), CanBeOnboarded=countif(OnboardingStatus=~'CanBeOnboarded'), NotOnboarded=countif(OnboardingStatus=~'NotOnboarded'), Unsupported=countif(OnboardingStatus=~'Unsupported')\n| mv-expand kv=pack_array(pack('label','Total Cameras','value',TotalCameras), pack('label','Onboarded','value',Onboarded), pack('label','Can Be Onboarded','value',CanBeOnboarded), pack('label','Not Onboarded','value',NotOnboarded), pack('label','Unsupported (Expected)','value',Unsupported))\n| project label=tostring(kv.label), value=toint(kv.value)",
+              "query": "DeviceInfo\n| where Timestamp {TimeRange}\n| summarize arg_max(Timestamp, DeviceType, OnboardingStatus) by DeviceId, DeviceName\n| where DeviceType in~ ('Camera','Webcam','AudioVideoEquipment','VideoSurveillance') or DeviceName has_any ('cam','cctv','nvr','dvr','ipcam','hikvision','dahua','axis','vivotek','pelco','bosch-cam','arlo','reolink','amcrest')\n| summarize TotalCameras=count(), Onboarded=countif(OnboardingStatus=~'Onboarded'), CanBeOnboarded=countif(OnboardingStatus=~'CanBeOnboarded'), NotOnboarded=countif(OnboardingStatus=~'NotOnboarded'), Unsupported=countif(OnboardingStatus=~'Unsupported'), Unknown=countif(isempty(OnboardingStatus) or OnboardingStatus !in~ ('Onboarded','CanBeOnboarded','NotOnboarded','Unsupported'))\n| mv-expand kv=pack_array(pack('label','Total Cameras','value',TotalCameras), pack('label','Onboarded','value',Onboarded), pack('label','Can Be Onboarded','value',CanBeOnboarded), pack('label','Not Onboarded','value',NotOnboarded), pack('label','Unsupported (Expected)','value',Unsupported), pack('label','Unknown','value',Unknown))\n| project label=tostring(kv.label), value=toint(kv.value)",
               "size": 4,
               "title": "Camera Inventory KPI",
               "timeContextFromParameter": "TimeRange",
