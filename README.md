@@ -1,5 +1,7 @@
 # KQL
- 
-Kusto Query Language (KQL) is the core analytical language used across Microsoft Defender XDR and Microsoft Sentinel, giving SOC, DFIR, and Threat Hunting teams a fast and expressive way to interrogate security telemetry at scale. Instead of complex syntax, KQL uses readable statements that make it easy to understand intent, pivot quickly, and iterate during investigations. Its table and column model aligns naturally with how security telemetry is structured, making it ideal for incident response and threat triage workflows. KQL excels at security focused analytics: parsing logs, correlating entities across data sources, inspecting sequences of events, and extracting patterns from noisy telemetry. It offers deep support for text search, event parsing, time series operations, anomaly exploration, behavioral pivoting, and large scale aggregation over high volume data. For threat hunters, these capabilities make it possible to move from hypothesis to evidence quickly. For DFIR analysts, KQL provides the precision needed to reconstruct timelines, isolate malicious activity, and surface rare or suspicious events buried in dense telemetry. For SOC teams, KQL enables rapid detection tuning, alert validation, and continuous review of environment wide behavior. Whether you are identifying lateral movement, tracking malware execution, validating an alert, or building advanced detections, KQL provides a lightweight but powerful language optimized for the way modern security teams work.
 
-For documentation, see [Kusto Query Language (KQL) overview.](https://learn.microsoft.com/en-us/kusto/query/?view=azure-data-explorer) 
+This repository contains KQL content for Microsoft Defender XDR and Microsoft Sentinel.
+
+Kusto Query Language is used to search, filter, join, summarize, and investigate security telemetry. It works well for incident response, threat hunting, detection tuning, and reporting because the syntax is readable and maps cleanly to log data.
+
+For documentation, see [Kusto Query Language (KQL) overview](https://learn.microsoft.com/en-us/kusto/query/?view=azure-data-explorer).
